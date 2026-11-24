@@ -8,7 +8,7 @@ Datenschutzfreundliche Browser-Erweiterung (**Manifest V3**) für **Google Chrom
 - **Flexible Whitelist:** Domains wie `payback.de` (inkl. Subdomains, optional auch Exakt-Matches `=host` oder Wildcards `*.domain.de`) per 1-Klick im Popup oder in den Einstellungen freigeben – standardmäßig mit *Automatisch akzeptieren* oder optional *Nicht eingreifen*.
 - **Unvermeidbare Banner (abschaltbar):** Optionale Einstellung, um Pay-or-OK-/PUR-Abo-Paywalls (die keine kostenlose Ablehnen-Option anbieten) automatisch über die kostenlose Weiter-Option zu schließen, ohne jemals kostenpflichtige Abo-Buttons zu klicken.
 - **Global Privacy Control (`Sec-GPC: 1`):** Sendet das standardisierte Datenschutz-Signal als HTTP-Header und `navigator.globalPrivacyControl` – auf Whitelist-Domains automatisch deaktiviert.
-- **100 % lokal:** Keine Telemetrie, keine externen Server-Abfragen (`data_collection_permissions: ["none"]`).
+- **Datenschutz & Speicherung:** Cookie-Banner werden direkt im Browser verarbeitet – Riczone Cookie Guard verwendet keinen eigenen Server und erhebt keine Telemetrie (`data_collection_permissions: ["none"]`). Statistik und Aktionsprotokoll (letzte 50 Einträge) bleiben lokal (`browser.storage.local`). Einstellungen und Whitelist werden über `browser.storage.sync` (mit lokalem Fallback) abgelegt und können dadurch über die eingebaute Browser-Synchronisierung zwischen Geräten synchronisiert werden.
 
 ## Entwicklung & Build
 
@@ -33,5 +33,7 @@ npm run test:e2e      # Browser-E2E-Tests (Playwright)
 
 ## Lizenz & Kontakt
 
-Veröffentlicht unter der [MIT-Lizenz](./LICENSE).  
+- **Eigener Code (Riczone Cookie Guard):** Veröffentlicht unter der [MIT-Lizenz](./LICENSE).
+- **Drittanbieter-Bibliothek (`@duckduckgo/autoconsent` v18.10.0):** Lizenz unter der **Mozilla Public License 2.0 (MPL-2.0)**. Der vollständige Lizenzhinweis inkl. Quellen-Links zu dieser Version befindet sich in [public/THIRD-PARTY-LICENSES.txt](./public/THIRD-PARTY-LICENSES.txt) und ist in beiden Browser-Paketen enthalten ([Originalquellen v18.10.0](https://github.com/duckduckgo/autoconsent/tree/v18.10.0)).
+
 Kontakt: [riczone.digital@gmail.com](mailto:riczone.digital@gmail.com) · [riczone.de](https://riczone.de)
