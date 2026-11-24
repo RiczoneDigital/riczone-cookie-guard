@@ -308,17 +308,35 @@ test.describe('Riczone Cookie Guard – End-to-End', () => {
       fullPage: true,
     });
 
-    // 7. Verify Firefox-for-Android mobile viewports (360px & 320px): zero horizontal overflow
-    await popupPage.setViewportSize({ width: 320, height: 640 });
-    await popupPage.waitForTimeout(100);
-    const popupOverflow = await popupPage.evaluate(
-      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    // 7a. Desktop Chrome popup regression check: body must stay 360px wide even if popup starts narrow
+    await popupPage.setViewportSize({ width: 200, height: 420 });
+    const desktopPopupWidth = await popupPage.evaluate(
+      () => document.body.getBoundingClientRect().width,
     );
-    expect(popupOverflow).toBeLessThanOrEqual(0);
+    expect(desktopPopupWidth).toBeGreaterThanOrEqual(360);
+
+    // 7b. Mobile Android check (hover: none + pointer: coarse via CDP mobile emulation): full width, zero overflow
+    await popupPage.setViewportSize({ width: 360, height: 640 });
+    const cdp = await context.newCDPSession(popupPage);
+    await cdp.send('Emulation.setDeviceMetricsOverride', {
+      width: 360,
+      height: 640,
+      deviceScaleFactor: 2,
+      mobile: true,
+    });
+    await cdp.send('Emulation.setTouchEmulationEnabled', { enabled: true });
+    await popupPage.waitForTimeout(100);
+    const mobileMetrics = await popupPage.evaluate(() => ({
+      width: document.body.getBoundingClientRect().width,
+      overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    }));
+    expect(mobileMetrics.width).toBeGreaterThanOrEqual(355);
+    expect(mobileMetrics.overflow).toBeLessThanOrEqual(0);
     await popupPage.screenshot({
       path: path.join(SCREENSHOT_DIR, 'popup-mobile.png'),
       fullPage: true,
     });
+    await cdp.detach();
 
     await optionsPage.setViewportSize({ width: 360, height: 780 });
     await optionsPage.waitForTimeout(100);
