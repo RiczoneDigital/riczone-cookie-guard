@@ -11,7 +11,7 @@ npm run package
 Danach liegen im Ordner `dist-packages/` drei Dateien bereit:
 
 - `Riczone-Cookie-Guard-Chrome.zip` – für Google Chrome
-- `Riczone-Cookie-Guard-Firefox-unsigned.zip` – das unsignierte Firefox-Add-on (Manifest V3, `gecko.id: cookie-guard@riczone.de`, `strict_min_version: 142.0`, `data_collection_permissions: ["none"]`)
+- `Riczone-Cookie-Guard-Firefox-unsigned.zip` – das unsignierte Firefox-Add-on (Manifest V3, `gecko.id: cookie-guard@riczone.de`, Desktop & Firefox für Android ab `strict_min_version: 142.0`, `data_collection_permissions: ["none"]`)
 - `Riczone-Cookie-Guard-Firefox-sources.zip` – der komplette Quellcode ohne `node_modules` / Build-Artefakte für die AMO-Quellcodeprüfung
 
 ## 2. Auf addons.mozilla.org signieren lassen

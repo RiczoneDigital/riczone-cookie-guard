@@ -307,5 +307,28 @@ test.describe('Riczone Cookie Guard – End-to-End', () => {
       path: path.join(SCREENSHOT_DIR, 'popup.png'),
       fullPage: true,
     });
+
+    // 7. Verify Firefox-for-Android mobile viewports (360px & 320px): zero horizontal overflow
+    await popupPage.setViewportSize({ width: 320, height: 640 });
+    await popupPage.waitForTimeout(100);
+    const popupOverflow = await popupPage.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(popupOverflow).toBeLessThanOrEqual(0);
+    await popupPage.screenshot({
+      path: path.join(SCREENSHOT_DIR, 'popup-mobile.png'),
+      fullPage: true,
+    });
+
+    await optionsPage.setViewportSize({ width: 360, height: 780 });
+    await optionsPage.waitForTimeout(100);
+    const optionsOverflow = await optionsPage.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(optionsOverflow).toBeLessThanOrEqual(0);
+    await optionsPage.screenshot({
+      path: path.join(SCREENSHOT_DIR, 'options-mobile.png'),
+      fullPage: true,
+    });
   });
 });

@@ -82,8 +82,12 @@ function validateManifests() {
     throw new Error('Firefox-Manifest ist nicht Manifest V3.');
   }
   const gecko = firefoxManifest.browser_specific_settings?.gecko;
+  const geckoAndroid = firefoxManifest.browser_specific_settings?.gecko_android;
   if (!gecko?.id || !gecko?.strict_min_version) {
     throw new Error('Firefox-Manifest fehlen browser_specific_settings.gecko Angaben.');
+  }
+  if (!geckoAndroid?.strict_min_version) {
+    throw new Error('Firefox-Manifest fehlen browser_specific_settings.gecko_android Angaben.');
   }
   if (!gecko?.data_collection_permissions?.required?.includes('none')) {
     throw new Error('Firefox-Manifest fehlt gecko.data_collection_permissions.required: ["none"].');
@@ -91,7 +95,9 @@ function validateManifests() {
 
   console.log('Manifest-Prüfung erfolgreich:');
   console.log(`  Chrome MV3:  ${chromeManifest.name} v${chromeManifest.version} (SW: ${chromeManifest.background.service_worker})`);
-  console.log(`  Firefox MV3: ${firefoxManifest.name} v${firefoxManifest.version} (Gecko ID: ${gecko.id}, min: ${gecko.strict_min_version})`);
+  console.log(
+    `  Firefox MV3: ${firefoxManifest.name} v${firefoxManifest.version} (Gecko ID: ${gecko.id}, Desktop min: ${gecko.strict_min_version}, Android min: ${geckoAndroid.strict_min_version})`,
+  );
 }
 
 fs.mkdirSync(DIST_PACKAGES, { recursive: true });

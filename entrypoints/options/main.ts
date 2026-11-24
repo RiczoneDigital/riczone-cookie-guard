@@ -35,6 +35,7 @@ const els = {
   setGpc: document.getElementById('set-gpc') as HTMLInputElement,
   clearLogBtn: document.getElementById('clear-log-btn') as HTMLButtonElement,
   logEmpty: document.getElementById('log-empty') as HTMLElement,
+  logTableWrap: document.getElementById('log-table-wrap') as HTMLElement,
   logTable: document.getElementById('log-table') as HTMLTableElement,
   logBody: document.getElementById('log-body') as HTMLTableSectionElement,
 };
@@ -161,12 +162,12 @@ function renderLog(): void {
 
   if (log.length === 0) {
     els.logEmpty.hidden = false;
-    els.logTable.hidden = true;
+    els.logTableWrap.hidden = true;
     return;
   }
 
   els.logEmpty.hidden = true;
-  els.logTable.hidden = false;
+  els.logTableWrap.hidden = false;
 
   for (const item of log) {
     const tr = document.createElement('tr');

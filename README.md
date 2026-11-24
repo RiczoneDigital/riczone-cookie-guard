@@ -1,6 +1,6 @@
 # Riczone Cookie Guard
 
-Datenschutzfreundliche Browser-Erweiterung (**Manifest V3**) für **Google Chrome** und **Mozilla Firefox**, die Cookie-Banner automatisch ablehnt – mit flexibler Whitelist und Global Privacy Control (`Sec-GPC: 1`).
+Datenschutzfreundliche Browser-Erweiterung (**Manifest V3**) für **Google Chrome**, **Mozilla Firefox** und **Firefox für Android**, die Cookie-Banner automatisch ablehnt – mit flexibler Whitelist und Global Privacy Control (`Sec-GPC: 1`).
 
 ## Funktionen
 

@@ -229,8 +229,9 @@ els.whitelistModeSelect.addEventListener('change', async () => {
   await loadPopup();
 });
 
-els.openOptionsBtn.addEventListener('click', () => {
-  void browser.runtime.openOptionsPage();
+els.openOptionsBtn.addEventListener('click', async () => {
+  await browser.runtime.openOptionsPage();
+  window.close();
 });
 
 void loadPopup();
