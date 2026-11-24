@@ -81,11 +81,12 @@ export default defineContentScript({
         maxDurationMs: 10_000,
         shouldSkip: () => alreadyReported || runner.isHandled(),
         onSuccess: (match) => {
-          const prefix =
+          const label =
             match.action === 'accepted-unavoidable'
-              ? t('sourceUnavoidable')
-              : t('sourceHeuristic');
-          const label = match.label ? `${prefix} (${match.label})` : prefix;
+              ? match.label || t('sourceUnavoidable')
+              : match.label
+                ? `${t('sourceHeuristic')} · ${match.label}`
+                : t('sourceHeuristic');
           reportAction(label, 'heuristic', match.action);
         },
       });

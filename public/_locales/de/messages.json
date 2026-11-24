@@ -100,10 +100,10 @@
     }
   },
   "badgeUnavoidable": {
-    "message": "Unvermeidbar akzeptiert"
+    "message": "Akzeptiert (Fallback)"
   },
   "detailUnavoidable": {
-    "message": "Keine kostenlose Ablehnen-Option – automatisch fortgefahren ($CMP$).",
+    "message": "Ablehnen auf dieser Seite nicht möglich – kostenlos akzeptiert ($CMP$).",
     "placeholders": {
       "cmp": { "content": "$1" }
     }
@@ -247,10 +247,10 @@
     "message": "Erkennt zusätzliche Cookie-Banner, falls kein bekanntes CMP-Regelwerk greift."
   },
   "setUnavoidableTitle": {
-    "message": "Unvermeidbare Banner automatisch akzeptieren (z. B. PUR-Abo-Paywalls)"
+    "message": "Unvermeidbare Banner automatisch akzeptieren (z. B. PUR-Abo-Hinweise)"
   },
   "setUnavoidableDesc": {
-    "message": "Wenn eine Webseite keine kostenlose Ablehnen-Option anbietet (z. B. PUR-Abo oder reine Hinweis-Banner), wird stattdessen automatisch akzeptiert, damit du ohne Unterbrechung weiterlesen kannst."
+    "message": "Wenn eine Webseite keine Ablehnen-Option anbietet (z. B. bei Werbung-oder-Abo-Abfragen), wird automatisch die kostenlose Weiter-Option mit Cookies gewählt – kostenpflichtige Abos werden niemals angeklickt."
   },
   "setGpcTitle": {
     "message": "Global Privacy Control (Sec-GPC: 1)"

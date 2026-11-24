@@ -100,10 +100,10 @@
     }
   },
   "badgeUnavoidable": {
-    "message": "Accepted (unavoidable)"
+    "message": "Accepted (fallback)"
   },
   "detailUnavoidable": {
-    "message": "No free reject option available – continued automatically ($CMP$).",
+    "message": "Reject not available on this site – accepted for free ($CMP$).",
     "placeholders": {
       "cmp": { "content": "$1" }
     }
@@ -247,10 +247,10 @@
     "message": "Detects additional cookie banners when no built-in CMP rule matches."
   },
   "setUnavoidableTitle": {
-    "message": "Auto-accept unavoidable banners (e.g. pay-or-OK walls)"
+    "message": "Auto-accept unavoidable banners (e.g. ad-or-subscribe walls)"
   },
   "setUnavoidableDesc": {
-    "message": "If a site offers no free reject option (e.g. pay-or-OK walls or notice-only banners), automatically continues via the free accept button instead of blocking the page."
+    "message": "If a site offers no reject option (e.g. accept-with-ads vs. paid subscription), automatically selects the free continue option with cookies – paid subscriptions are never clicked."
   },
   "setGpcTitle": {
     "message": "Global Privacy Control (Sec-GPC: 1)"
