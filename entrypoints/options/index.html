@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="manifest.open_in_tab" content="true" />
+    <title>Riczone Cookie Guard – Einstellungen</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <header class="page-header">
+      <div class="container header-inner">
+        <div class="brand">
+          <img src="/icon/48.png" alt="" width="34" height="34" />
+          <div>
+            <h1>Riczone Cookie Guard</h1>
+            <p class="subtitle">Automatisches Cookie-Ablehnen, Whitelist &amp; Datenschutz-Signale</p>
+          </div>
+        </div>
+        <div class="header-stats">
+          <div><strong id="opt-stat-rejected">0</strong><span>Abgelehnt</span></div>
+          <div><strong id="opt-stat-accepted">0</strong><span>Akzeptiert</span></div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container layout">
+      <div id="status-toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+      <section class="panel" aria-labelledby="wl-heading">
+        <div class="panel-head">
+          <div>
+            <h2 id="wl-heading">Whitelist</h2>
+            <p class="panel-desc">
+              Auf eingetragenen Domains werden Cookies standardmäßig
+              <strong>automatisch akzeptiert</strong> (z. B. für Payback). Du kannst pro Eintrag
+              jederzeit auf <em>Nicht eingreifen</em> umstellen. Subdomains werden automatisch mit
+              eingeschlossen (<code>payback.de</code> gilt auch für <code>www.payback.de</code>).
+            </p>
+          </div>
+          <div class="panel-actions">
+            <button id="export-btn" type="button" class="btn btn-secondary">JSON exportieren</button>
+            <label class="btn btn-secondary file-btn">
+              JSON importieren
+              <input id="import-input" type="file" accept="application/json,.json" hidden />
+            </label>
+          </div>
+        </div>
+
+        <form id="whitelist-form" class="wl-form" novalidate>
+          <div class="field">
+            <label for="pattern-input">Domain oder Muster</label>
+            <input
+              id="pattern-input"
+              type="text"
+              placeholder="z. B. payback.de, *.shop.de oder =www.beispiel.de"
+              required
+              autocomplete="off"
+            />
+          </div>
+          <div class="field">
+            <label for="mode-select">Verhalten</label>
+            <select id="mode-select">
+              <option value="accept" selected>Automatisch akzeptieren</option>
+              <option value="ignore">Nicht eingreifen</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="note-input">Notiz (optional)</label>
+            <input
+              id="note-input"
+              type="text"
+              placeholder="z. B. Tracking benötigt"
+              maxlength="120"
+            />
+          </div>
+          <div class="field field-submit">
+            <button type="submit" class="btn btn-mint">Hinzufügen</button>
+          </div>
+        </form>
+
+        <div class="search-row">
+          <label for="wl-search" class="sr-only">Whitelist durchsuchen</label>
+          <input id="wl-search" type="search" placeholder="Whitelist filtern…" />
+          <span id="wl-count" class="count-label">0 Einträge</span>
+        </div>
+
+        <div id="wl-empty" class="empty-state" hidden>
+          Noch keine Domains auf der Whitelist. Füge oben eine Domain wie <code>payback.de</code> hinzu.
+        </div>
+
+        <ul id="wl-list" class="wl-list"></ul>
+      </section>
+
+      <section class="panel" aria-labelledby="settings-heading">
+        <h2 id="settings-heading">Allgemeine Einstellungen</h2>
+        <div class="settings-list">
+          <label class="setting-row">
+            <div>
+              <strong>Erweiterung aktiv</strong>
+              <p>Lehnt Cookie-Banner automatisch auf allen Webseiten außerhalb der Whitelist ab.</p>
+            </div>
+            <input id="set-enabled" type="checkbox" />
+          </label>
+
+          <label class="setting-row">
+            <div>
+              <strong>Deutsch-/Englische Fallback-Heuristik</strong>
+              <p>
+                Erkennt zusätzliche Cookie-Banner, falls kein bekanntes CMP-Regelwerk greift.
+              </p>
+            </div>
+            <input id="set-heuristic" type="checkbox" />
+          </label>
+
+          <label class="setting-row">
+            <div>
+              <strong>Unvermeidbare Banner automatisch akzeptieren (z. B. PUR-Abo-Paywalls)</strong>
+              <p>
+                Wenn eine Webseite keine kostenlose Ablehnen-Option anbietet (z. B. PUR-Abo oder
+                reine Hinweis-Banner), wird stattdessen automatisch akzeptiert, damit du ohne
+                Unterbrechung weiterlesen kannst.
+              </p>
+            </div>
+            <input id="set-unavoidable" type="checkbox" />
+          </label>
+
+          <label class="setting-row">
+            <div>
+              <strong>Global Privacy Control (<code>Sec-GPC: 1</code>)</strong>
+              <p>
+                Sendet das standardisierte Datenschutz-Signal an Webseiten. Wird auf
+                Whitelist-Domains automatisch deaktiviert.
+              </p>
+            </div>
+            <input id="set-gpc" type="checkbox" />
+          </label>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="log-heading">
+        <div class="panel-head">
+          <div>
+            <h2 id="log-heading">Letzte Aktivitäten (lokal)</h2>
+            <p class="panel-desc">
+              Die letzten 50 Aktionen werden ausschließlich lokal in deinem Browser gespeichert.
+            </p>
+          </div>
+          <button id="clear-log-btn" type="button" class="btn btn-secondary">Protokoll leeren</button>
+        </div>
+
+        <div id="log-empty" class="empty-state" hidden>
+          Noch keine Banner-Aktionen protokolliert.
+        </div>
+
+        <table id="log-table" class="log-table" hidden>
+          <thead>
+            <tr>
+              <th>Zeit</th>
+              <th>Domain</th>
+              <th>Aktion</th>
+              <th>Erkennung</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="log-body"></tbody>
+        </table>
+      </section>
+    </main>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

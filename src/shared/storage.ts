@@ -1,0 +1,289 @@
+import {
+  DEFAULT_SETTINGS,
+  DEFAULT_STATS,
+  type ActionLogEntry,
+  type ActionOutcome,
+  type ActionSource,
+  type ExtensionSettings,
+  type ExtensionStats,
+  type WhitelistEntry,
+  type WhitelistExportPayload,
+  type WhitelistMode,
+} from './types';
+import { validateAndNormalizePattern } from './matcher';
+
+const SETTINGS_KEY = 'rcg_settings_v1';
+const STATS_KEY = 'rcg_stats_v1';
+const LOG_KEY = 'rcg_log_v1';
+const MAX_LOG_ENTRIES = 50;
+
+interface StorageAreaLike {
+  get(keys: string | string[]): Promise<Record<string, unknown>>;
+  set(items: Record<string, unknown>): Promise<void>;
+}
+
+interface ExtensionGlobalLike {
+  browser?: { storage?: { sync?: StorageAreaLike; local?: StorageAreaLike } };
+  chrome?: { storage?: { sync?: StorageAreaLike; local?: StorageAreaLike } };
+}
+
+function getExtensionStorage(): { sync?: StorageAreaLike; local?: StorageAreaLike } | undefined {
+  const g = globalThis as unknown as ExtensionGlobalLike;
+  return g.browser?.storage ?? g.chrome?.storage;
+}
+
+function getSyncStorage(): StorageAreaLike {
+  const storage = getExtensionStorage();
+  if (storage?.sync) {
+    return storage.sync;
+  }
+  if (storage?.local) {
+    return storage.local;
+  }
+  throw new Error('Keine Browser-Storage-API verfügbar.');
+}
+
+function getLocalStorage(): StorageAreaLike {
+  const storage = getExtensionStorage();
+  if (storage?.local) {
+    return storage.local;
+  }
+  throw new Error('Keine lokale Browser-Storage-API verfügbar.');
+}
+
+export function getTodayIsoDate(now: number = Date.now()): string {
+  const d = new Date(now);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+export function generateId(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return `rcg_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+}
+
+function sanitizeWhitelist(raw: unknown): WhitelistEntry[] {
+  if (!Array.isArray(raw)) {
+    return [];
+  }
+
+  const seen = new Set<string>();
+  const result: WhitelistEntry[] = [];
+
+  for (const item of raw) {
+    if (!item || typeof item !== 'object') {
+      continue;
+    }
+    const record = item as Partial<WhitelistEntry>;
+    if (typeof record.pattern !== 'string') {
+      continue;
+    }
+    const validated = validateAndNormalizePattern(record.pattern);
+    if (!validated.valid || !validated.normalized || seen.has(validated.normalized)) {
+      continue;
+    }
+
+    const mode: WhitelistMode = record.mode === 'ignore' ? 'ignore' : 'accept';
+    seen.add(validated.normalized);
+    result.push({
+      id: typeof record.id === 'string' && record.id ? record.id : generateId(),
+      pattern: validated.normalized,
+      mode,
+      note: typeof record.note === 'string' && record.note.trim() ? record.note.trim().slice(0, 120) : undefined,
+      createdAt: typeof record.createdAt === 'number' && Number.isFinite(record.createdAt) ? record.createdAt : Date.now(),
+    });
+  }
+
+  return result;
+}
+
+export function sanitizeSettings(raw: unknown): ExtensionSettings {
+  if (!raw || typeof raw !== 'object') {
+    return { ...DEFAULT_SETTINGS, whitelist: [] };
+  }
+
+  const record = raw as Partial<ExtensionSettings>;
+
+  return {
+    enabled: typeof record.enabled === 'boolean' ? record.enabled : DEFAULT_SETTINGS.enabled,
+    heuristicFallback:
+      typeof record.heuristicFallback === 'boolean'
+        ? record.heuristicFallback
+        : DEFAULT_SETTINGS.heuristicFallback,
+    acceptUnavoidableBanners:
+      typeof record.acceptUnavoidableBanners === 'boolean'
+        ? record.acceptUnavoidableBanners
+        : DEFAULT_SETTINGS.acceptUnavoidableBanners,
+    sendGpc: typeof record.sendGpc === 'boolean' ? record.sendGpc : DEFAULT_SETTINGS.sendGpc,
+    whitelist: sanitizeWhitelist(record.whitelist),
+  };
+}
+
+export async function loadSettings(): Promise<ExtensionSettings> {
+  try {
+    const data = await getSyncStorage().get(SETTINGS_KEY);
+    if (data[SETTINGS_KEY]) {
+      return sanitizeSettings(data[SETTINGS_KEY]);
+    }
+  } catch {
+    // Fallback to local storage below
+  }
+
+  try {
+    const localData = await getLocalStorage().get(SETTINGS_KEY);
+    return sanitizeSettings(localData[SETTINGS_KEY]);
+  } catch {
+    return { ...DEFAULT_SETTINGS, whitelist: [] };
+  }
+}
+
+export async function saveSettings(settings: ExtensionSettings): Promise<ExtensionSettings> {
+  const clean = sanitizeSettings(settings);
+  try {
+    await getSyncStorage().set({ [SETTINGS_KEY]: clean });
+  } catch {
+    // Quota or sync disabled: persist locally as fallback
+  }
+  try {
+    await getLocalStorage().set({ [SETTINGS_KEY]: clean });
+  } catch {
+    // Ignore if local storage unavailable in mock environments
+  }
+  return clean;
+}
+
+export async function loadStats(now: number = Date.now()): Promise<ExtensionStats> {
+  const today = getTodayIsoDate(now);
+  try {
+    const data = await getLocalStorage().get(STATS_KEY);
+    const raw = data[STATS_KEY] as Partial<ExtensionStats> | undefined;
+    if (!raw || typeof raw !== 'object') {
+      return { ...DEFAULT_STATS, todayDate: today };
+    }
+    const isSameDay = raw.todayDate === today;
+    return {
+      totalRejected: typeof raw.totalRejected === 'number' ? raw.totalRejected : 0,
+      totalAccepted: typeof raw.totalAccepted === 'number' ? raw.totalAccepted : 0,
+      todayDate: today,
+      todayRejected: isSameDay && typeof raw.todayRejected === 'number' ? raw.todayRejected : 0,
+      todayAccepted: isSameDay && typeof raw.todayAccepted === 'number' ? raw.todayAccepted : 0,
+    };
+  } catch {
+    return { ...DEFAULT_STATS, todayDate: today };
+  }
+}
+
+export async function loadActionLog(): Promise<ActionLogEntry[]> {
+  try {
+    const data = await getLocalStorage().get(LOG_KEY);
+    const raw = data[LOG_KEY];
+    return Array.isArray(raw) ? (raw as ActionLogEntry[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function recordAction(
+  domain: string,
+  cmp: string,
+  action: ActionOutcome,
+  source: ActionSource,
+  now: number = Date.now(),
+): Promise<{ stats: ExtensionStats; log: ActionLogEntry[] }> {
+  const [stats, log] = await Promise.all([loadStats(now), loadActionLog()]);
+
+  if (action === 'rejected') {
+    stats.totalRejected += 1;
+    stats.todayRejected += 1;
+  } else if (action === 'accepted') {
+    stats.totalAccepted += 1;
+    stats.todayAccepted += 1;
+  }
+
+  const entry: ActionLogEntry = {
+    id: generateId(),
+    timestamp: now,
+    domain,
+    cmp,
+    action,
+    source,
+  };
+
+  const nextLog = [entry, ...log].slice(0, MAX_LOG_ENTRIES);
+
+  await getLocalStorage().set({
+    [STATS_KEY]: stats,
+    [LOG_KEY]: nextLog,
+  });
+
+  return { stats, log: nextLog };
+}
+
+export async function clearActionLog(): Promise<void> {
+  await getLocalStorage().set({ [LOG_KEY]: [] });
+}
+
+export function createWhitelistExportPayload(whitelist: WhitelistEntry[]): WhitelistExportPayload {
+  return {
+    app: 'Riczone Cookie Guard',
+    schemaVersion: 1,
+    exportedAt: new Date().toISOString(),
+    whitelist,
+  };
+}
+
+export interface WhitelistImportResult {
+  ok: boolean;
+  entries?: WhitelistEntry[];
+  addedCount?: number;
+  error?: string;
+}
+
+export function parseWhitelistImportJson(
+  jsonText: string,
+  existing: WhitelistEntry[],
+): WhitelistImportResult {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(jsonText);
+  } catch {
+    return { ok: false, error: 'Die Datei enthält kein gültiges JSON.' };
+  }
+
+  const rawList = Array.isArray(parsed)
+    ? parsed
+    : parsed && typeof parsed === 'object' && Array.isArray((parsed as { whitelist?: unknown }).whitelist)
+      ? (parsed as { whitelist: unknown[] }).whitelist
+      : null;
+
+  if (!rawList) {
+    return {
+      ok: false,
+      error: 'Ungültiges Export-Format. Erwartet wird eine Whitelist-Liste aus Riczone Cookie Guard.',
+    };
+  }
+
+  const imported = sanitizeWhitelist(rawList);
+  const byPattern = new Map<string, WhitelistEntry>();
+  for (const item of existing) {
+    byPattern.set(item.pattern, item);
+  }
+
+  let addedCount = 0;
+  for (const item of imported) {
+    if (!byPattern.has(item.pattern)) {
+      addedCount += 1;
+    }
+    byPattern.set(item.pattern, item);
+  }
+
+  return {
+    ok: true,
+    entries: Array.from(byPattern.values()),
+    addedCount,
+  };
+}

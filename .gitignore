@@ -1,0 +1,9 @@
+node_modules/
+.wxt/
+.output/
+dist-packages/
+playwright-report/
+test-results/
+*.log
+.DS_Store
+Thumbs.db

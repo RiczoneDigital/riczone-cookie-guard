@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Riczone Cookie Guard</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <img src="/icon/32.png" alt="" width="24" height="24" class="brand-icon" />
+        <h1>Riczone Cookie Guard</h1>
+      </div>
+      <label class="switch" aria-label="Erweiterung aktivieren oder deaktivieren">
+        <input id="global-toggle" type="checkbox" />
+        <span class="switch-track"></span>
+      </label>
+    </header>
+
+    <main>
+      <section id="permission-banner" class="alert-box" hidden>
+        <p>
+          Firefox benötigt noch die Freigabe für Webseiten, damit Cookie-Banner automatisch erkannt
+          werden können.
+        </p>
+        <button id="grant-permission-btn" type="button" class="btn btn-mint">
+          Webseiten-Zugriff freigeben
+        </button>
+      </section>
+
+      <section class="card site-card">
+        <div class="site-head">
+          <div class="site-meta">
+            <span class="label-small">Aktuelle Webseite</span>
+            <strong id="current-domain" class="domain-name">–</strong>
+          </div>
+          <span id="policy-badge" class="status-pill">Lädt…</span>
+        </div>
+
+        <p id="site-detail" class="site-detail"></p>
+
+        <div id="site-actions" class="site-actions">
+          <button id="whitelist-toggle-btn" type="button" class="btn btn-mint btn-full">
+            Auf Whitelist (Auto-Akzeptieren)
+          </button>
+
+          <div id="whitelist-mode-row" class="mode-row" hidden>
+            <label for="whitelist-mode-select">Whitelist-Verhalten:</label>
+            <select id="whitelist-mode-select">
+              <option value="accept">Automatisch akzeptieren</option>
+              <option value="ignore">Nicht eingreifen</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section class="stats-row" aria-label="Statistik">
+        <div class="stat-box">
+          <span class="stat-value" id="stat-rejected">0</span>
+          <span class="stat-label">Abgelehnt</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-value" id="stat-accepted">0</span>
+          <span class="stat-label">Whitelist akzeptiert</span>
+        </div>
+      </section>
+
+      <div id="feedback" class="feedback" role="status" aria-live="polite" hidden></div>
+    </main>
+
+    <footer class="footer">
+      <button id="open-options-btn" type="button" class="btn btn-dark btn-full">
+        Whitelist &amp; Einstellungen verwalten
+      </button>
+    </footer>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
