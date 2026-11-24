@@ -1,18 +1,18 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Riczone Cookie Guard</title>
+    <title data-i18n="extName">Riczone Cookie Guard</title>
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
     <header class="topbar">
       <div class="brand">
         <img src="/icon/32.png" alt="" width="24" height="24" class="brand-icon" />
-        <h1>Riczone Cookie Guard</h1>
+        <h1 data-i18n="extName">Riczone Cookie Guard</h1>
       </div>
-      <label class="switch" aria-label="Erweiterung aktivieren oder deaktivieren">
+      <label class="switch" data-i18n-aria-label="popupToggleAria" aria-label="Enable or disable extension">
         <input id="global-toggle" type="checkbox" />
         <span class="switch-track"></span>
       </label>
@@ -20,49 +20,46 @@
 
     <main>
       <section id="permission-banner" class="alert-box" hidden>
-        <p>
-          Firefox benötigt noch die Freigabe für Webseiten, damit Cookie-Banner automatisch erkannt
-          werden können.
+        <p data-i18n="popupPermissionNotice">
+          Firefox still needs website access permission to detect and handle cookie banners automatically.
         </p>
-        <button id="grant-permission-btn" type="button" class="btn btn-mint">
-          Webseiten-Zugriff freigeben
+        <button id="grant-permission-btn" type="button" class="btn btn-mint" data-i18n="popupPermissionGrantBtn">
+          Grant website access
         </button>
       </section>
 
       <section class="card site-card">
         <div class="site-head">
           <div class="site-meta">
-            <span class="label-small">Aktuelle Webseite</span>
+            <span class="label-small" data-i18n="popupCurrentSite">Current website</span>
             <strong id="current-domain" class="domain-name">–</strong>
           </div>
-          <span id="policy-badge" class="status-pill">Lädt…</span>
+          <span id="policy-badge" class="status-pill" data-i18n="popupLoading">Loading…</span>
         </div>
 
         <p id="site-detail" class="site-detail"></p>
 
         <div id="site-actions" class="site-actions">
-          <button id="whitelist-toggle-btn" type="button" class="btn btn-mint btn-full">
-            Auf Whitelist (Auto-Akzeptieren)
-          </button>
+          <button id="whitelist-toggle-btn" type="button" class="btn btn-mint btn-full"></button>
 
           <div id="whitelist-mode-row" class="mode-row" hidden>
-            <label for="whitelist-mode-select">Whitelist-Verhalten:</label>
+            <label for="whitelist-mode-select" data-i18n="popupWhitelistModeLabel">Whitelist behavior:</label>
             <select id="whitelist-mode-select">
-              <option value="accept">Automatisch akzeptieren</option>
-              <option value="ignore">Nicht eingreifen</option>
+              <option value="accept" data-i18n="modeAccept">Accept automatically</option>
+              <option value="ignore" data-i18n="modeIgnore">Do not intervene</option>
             </select>
           </div>
         </div>
       </section>
 
-      <section class="stats-row" aria-label="Statistik">
+      <section class="stats-row" data-i18n-aria-label="statsAria" aria-label="Statistics">
         <div class="stat-box">
           <span class="stat-value" id="stat-rejected">0</span>
-          <span class="stat-label">Abgelehnt</span>
+          <span class="stat-label" data-i18n="statRejected">Rejected</span>
         </div>
         <div class="stat-box">
           <span class="stat-value" id="stat-accepted">0</span>
-          <span class="stat-label">Whitelist akzeptiert</span>
+          <span class="stat-label" data-i18n="statWhitelistAccepted">Whitelist accepted</span>
         </div>
       </section>
 
@@ -70,8 +67,8 @@
     </main>
 
     <footer class="footer">
-      <button id="open-options-btn" type="button" class="btn btn-dark btn-full">
-        Whitelist &amp; Einstellungen verwalten
+      <button id="open-options-btn" type="button" class="btn btn-dark btn-full" data-i18n="popupOpenOptions">
+        Manage whitelist &amp; settings
       </button>
     </footer>
 

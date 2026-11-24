@@ -1,3 +1,4 @@
+import { applyDocumentI18n, getUiLanguage, t } from '../../src/shared/i18n';
 import {
   createWhitelistExportPayload,
   parseWhitelistImportJson,
@@ -36,7 +37,6 @@ const els = {
   clearLogBtn: document.getElementById('clear-log-btn') as HTMLButtonElement,
   logEmpty: document.getElementById('log-empty') as HTMLElement,
   logTableWrap: document.getElementById('log-table-wrap') as HTMLElement,
-  logTable: document.getElementById('log-table') as HTMLTableElement,
   logBody: document.getElementById('log-body') as HTMLTableSectionElement,
 };
 
@@ -56,7 +56,8 @@ function showToast(message: string, kind: 'info' | 'error' = 'info'): void {
 }
 
 function formatTime(timestamp: number): string {
-  return new Date(timestamp).toLocaleString('de-DE', {
+  const locale = getUiLanguage().toLowerCase().startsWith('de') ? 'de-DE' : 'en-US';
+  return new Date(timestamp).toLocaleString(locale, {
     day: '2-digit',
     month: '2-digit',
     hour: '2-digit',
@@ -79,7 +80,8 @@ function renderWhitelist(): void {
     );
   });
 
-  els.wlCount.textContent = `${entries.length} ${entries.length === 1 ? 'Eintrag' : 'Einträge'}`;
+  els.wlCount.textContent =
+    entries.length === 1 ? t('wlCountSingular') : t('wlCountPlural', String(entries.length));
   els.wlList.textContent = '';
 
   if (entries.length === 0) {
@@ -111,14 +113,14 @@ function renderWhitelist(): void {
     controls.className = 'wl-item-controls';
 
     const modeSel = document.createElement('select');
-    modeSel.setAttribute('aria-label', `Verhalten für ${entry.pattern}`);
+    modeSel.setAttribute('aria-label', t('wlBehaviorAria', entry.pattern));
 
     const optAccept = document.createElement('option');
     optAccept.value = 'accept';
-    optAccept.textContent = 'Automatisch akzeptieren';
+    optAccept.textContent = t('modeAccept');
     const optIgnore = document.createElement('option');
     optIgnore.value = 'ignore';
-    optIgnore.textContent = 'Nicht eingreifen';
+    optIgnore.textContent = t('modeIgnore');
     modeSel.append(optAccept, optIgnore);
     modeSel.value = entry.mode;
 
@@ -130,20 +132,20 @@ function renderWhitelist(): void {
         mode: nextMode,
         note: entry.note,
       });
-      showToast(`Verhalten für ${entry.pattern} aktualisiert.`);
+      showToast(t('toastBehaviorUpdated', entry.pattern));
       await loadOptions();
     });
 
     const delBtn = document.createElement('button');
     delBtn.type = 'button';
     delBtn.className = 'btn btn-danger btn-sm';
-    delBtn.textContent = 'Entfernen';
+    delBtn.textContent = t('btnRemove');
     delBtn.addEventListener('click', async () => {
       await browser.runtime.sendMessage({
         type: 'rcg:remove-whitelist',
         idOrPattern: entry.id,
       });
-      showToast(`${entry.pattern} entfernt.`);
+      showToast(t('toastEntryRemoved', entry.pattern));
       await loadOptions();
     });
 
@@ -184,11 +186,11 @@ function renderLog(): void {
     badge.dataset.action = item.action;
     badge.textContent =
       item.action === 'accepted'
-        ? 'Whitelist akzeptiert'
+        ? t('statWhitelistAccepted')
         : item.action === 'accepted-unavoidable'
-          ? 'Unvermeidbar akzeptiert'
+          ? t('badgeUnavoidable')
           : item.action === 'rejected'
-            ? 'Abgelehnt'
+            ? t('statRejected')
             : item.action;
     tdAction.appendChild(badge);
 
@@ -199,14 +201,14 @@ function renderLog(): void {
     const wlBtn = document.createElement('button');
     wlBtn.type = 'button';
     wlBtn.className = 'btn btn-secondary btn-sm';
-    wlBtn.textContent = 'Auf Whitelist';
+    wlBtn.textContent = t('btnWhitelistShort');
     wlBtn.addEventListener('click', async () => {
       await browser.runtime.sendMessage({
         type: 'rcg:upsert-whitelist',
         pattern: item.domain,
         mode: 'accept',
       });
-      showToast(`${item.domain} zur Whitelist (Auto-Akzeptieren) hinzugefügt.`);
+      showToast(t('toastLogWhitelisted', item.domain));
       await loadOptions();
     });
     tdBtn.appendChild(wlBtn);
@@ -249,13 +251,13 @@ els.wlForm.addEventListener('submit', async (event) => {
   })) as { ok: boolean; error?: string };
 
   if (!resp.ok) {
-    showToast(resp.error || 'Ungültige Eingabe.', 'error');
+    showToast(resp.error || t('toastInvalidInput'), 'error');
     return;
   }
 
   els.patternInput.value = '';
   els.noteInput.value = '';
-  showToast('Whitelist-Eintrag gespeichert.');
+  showToast(t('toastEntrySaved'));
   await loadOptions();
 });
 
@@ -273,7 +275,7 @@ els.exportBtn.addEventListener('click', () => {
   a.download = 'riczone-cookie-guard-whitelist.json';
   a.click();
   URL.revokeObjectURL(url);
-  showToast('Whitelist als JSON exportiert.');
+  showToast(t('toastExported'));
 });
 
 els.importInput.addEventListener('change', async () => {
@@ -285,14 +287,14 @@ els.importInput.addEventListener('change', async () => {
   const text = await file.text();
   const parsed = parseWhitelistImportJson(text, currentState.settings.whitelist);
   if (!parsed.ok || !parsed.entries) {
-    showToast(parsed.error || 'Import fehlgeschlagen.', 'error');
+    showToast(parsed.error || t('toastImportFailed'), 'error');
     return;
   }
   await browser.runtime.sendMessage({
     type: 'rcg:update-settings',
     patch: { whitelist: parsed.entries },
   });
-  showToast(`Import erfolgreich (${parsed.addedCount ?? 0} neue Einträge).`);
+  showToast(t('toastImported', String(parsed.addedCount ?? 0)));
   await loadOptions();
 });
 
@@ -306,7 +308,7 @@ const syncToggleSettings = async () => {
       sendGpc: els.setGpc.checked,
     },
   });
-  showToast('Einstellungen gespeichert.');
+  showToast(t('toastSettingsSaved'));
   await loadOptions();
 };
 
@@ -317,8 +319,9 @@ els.setGpc.addEventListener('change', syncToggleSettings);
 
 els.clearLogBtn.addEventListener('click', async () => {
   await browser.runtime.sendMessage({ type: 'rcg:clear-log' });
-  showToast('Protokoll geleert.');
+  showToast(t('toastLogCleared'));
   await loadOptions();
 });
 
+applyDocumentI18n(document);
 void loadOptions();

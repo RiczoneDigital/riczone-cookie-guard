@@ -7,12 +7,11 @@ export default defineConfig({
   outDir: '.output',
   manifest: ({ browser }) => {
     const baseManifest = {
-      name: 'Riczone Cookie Guard',
-      short_name: 'Cookie Guard',
-      description:
-        'Lehnt Cookie-Banner automatisch ab und akzeptiert sie auf Whitelist-Seiten (z. B. Payback) automatisch.',
+      name: '__MSG_extName__',
+      short_name: '__MSG_extShortName__',
+      description: '__MSG_extDescription__',
       version: '1.0.0',
-      default_locale: undefined,
+      default_locale: 'en',
       permissions: ['storage', 'scripting', 'declarativeNetRequest'],
       host_permissions: ['<all_urls>'],
       icons: {
@@ -22,7 +21,7 @@ export default defineConfig({
         128: 'icon/128.png',
       },
       action: {
-        default_title: 'Riczone Cookie Guard',
+        default_title: '__MSG_extName__',
         default_icon: {
           16: 'icon/16.png',
           32: 'icon/32.png',

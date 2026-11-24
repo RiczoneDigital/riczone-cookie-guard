@@ -1,4 +1,5 @@
 import { evalSnippets } from '@duckduckgo/autoconsent';
+import { t } from '../src/shared/i18n';
 import {
   extractHostFromUrl,
   getGpcExcludedDomains,
@@ -146,7 +147,7 @@ async function updateBadgeForTab(tabId: number, status?: TabStatus): Promise<voi
   let fg = '#44ffca';
 
   if (!settings.enabled) {
-    text = 'AUS';
+    text = t('badgeOff');
     bg = '#4c596b';
     fg = '#f0f4f8';
   } else if (status?.reason === 'whitelist-accept') {

@@ -1,3 +1,4 @@
+import { t } from './i18n';
 import type {
   ExtensionSettings,
   ResolvedPolicy,
@@ -72,7 +73,7 @@ function isValidHostStructure(host: string): boolean {
 export function validateAndNormalizePattern(rawInput: string): PatternValidationResult {
   const trimmed = rawInput.trim();
   if (!trimmed) {
-    return { valid: false, error: 'Bitte gib eine Domain ein (z. B. payback.de).' };
+    return { valid: false, error: t('errPatternEmpty') };
   }
 
   let prefix = '';
@@ -89,7 +90,7 @@ export function validateAndNormalizePattern(rawInput: string): PatternValidation
   if (!candidate || candidate === '*' || candidate.includes('*')) {
     return {
       valid: false,
-      error: 'Ungültiges Muster. Nutze z. B. payback.de, *.payback.de oder =www.payback.de.',
+      error: t('errPatternWildcard'),
     };
   }
 
@@ -97,7 +98,7 @@ export function validateAndNormalizePattern(rawInput: string): PatternValidation
   if (/^https?:\/\//i.test(candidate)) {
     const extracted = extractHostFromUrl(candidate);
     if (!extracted) {
-      return { valid: false, error: 'Die eingefügte URL enthält keine gültige Web-Domain.' };
+      return { valid: false, error: t('errPatternUrl') };
     }
     candidate = extracted;
   } else {
@@ -115,7 +116,7 @@ export function validateAndNormalizePattern(rawInput: string): PatternValidation
   if (!isValidHostStructure(candidate)) {
     return {
       valid: false,
-      error: 'Bitte gib eine gültige Domain an (z. B. payback.de).',
+      error: t('errPatternInvalid'),
     };
   }
 

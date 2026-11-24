@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="manifest.open_in_tab" content="true" />
-    <title>Riczone Cookie Guard – Einstellungen</title>
+    <title data-i18n="optionsTitle">Riczone Cookie Guard – Settings</title>
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
@@ -13,13 +13,21 @@
         <div class="brand">
           <img src="/icon/48.png" alt="" width="34" height="34" />
           <div>
-            <h1>Riczone Cookie Guard</h1>
-            <p class="subtitle">Automatisches Cookie-Ablehnen, Whitelist &amp; Datenschutz-Signale</p>
+            <h1 data-i18n="extName">Riczone Cookie Guard</h1>
+            <p class="subtitle" data-i18n="optionsSubtitle">
+              Automatic cookie rejection, whitelist &amp; privacy signals
+            </p>
           </div>
         </div>
         <div class="header-stats">
-          <div><strong id="opt-stat-rejected">0</strong><span>Abgelehnt</span></div>
-          <div><strong id="opt-stat-accepted">0</strong><span>Akzeptiert</span></div>
+          <div>
+            <strong id="opt-stat-rejected">0</strong>
+            <span data-i18n="statRejected">Rejected</span>
+          </div>
+          <div>
+            <strong id="opt-stat-accepted">0</strong>
+            <span data-i18n="statAcceptedShort">Accepted</span>
+          </div>
         </div>
       </div>
     </header>
@@ -30,18 +38,19 @@
       <section class="panel" aria-labelledby="wl-heading">
         <div class="panel-head">
           <div>
-            <h2 id="wl-heading">Whitelist</h2>
-            <p class="panel-desc">
-              Auf eingetragenen Domains werden Cookies standardmäßig
-              <strong>automatisch akzeptiert</strong> (z. B. für Payback). Du kannst pro Eintrag
-              jederzeit auf <em>Nicht eingreifen</em> umstellen. Subdomains werden automatisch mit
-              eingeschlossen (<code>payback.de</code> gilt auch für <code>www.payback.de</code>).
+            <h2 id="wl-heading" data-i18n="wlHeading">Whitelist</h2>
+            <p class="panel-desc" data-i18n="wlDesc">
+              On listed domains, cookies are accepted automatically by default (e.g. for Payback).
+              You can switch any entry to 'Do not intervene' at any time. Subdomains are included
+              automatically (payback.de also matches www.payback.de).
             </p>
           </div>
           <div class="panel-actions">
-            <button id="export-btn" type="button" class="btn btn-secondary">JSON exportieren</button>
+            <button id="export-btn" type="button" class="btn btn-secondary" data-i18n="btnExportJson">
+              Export JSON
+            </button>
             <label class="btn btn-secondary file-btn">
-              JSON importieren
+              <span data-i18n="btnImportJson">Import JSON</span>
               <input id="import-input" type="file" accept="application/json,.json" hidden />
             </label>
           </div>
@@ -49,65 +58,74 @@
 
         <form id="whitelist-form" class="wl-form" novalidate>
           <div class="field">
-            <label for="pattern-input">Domain oder Muster</label>
+            <label for="pattern-input" data-i18n="labelDomainPattern">Domain or pattern</label>
             <input
               id="pattern-input"
               type="text"
-              placeholder="z. B. payback.de, *.shop.de oder =www.beispiel.de"
+              data-i18n-placeholder="placeholderDomainPattern"
+              placeholder="e.g. payback.de, *.shop.com or =www.example.com"
               required
               autocomplete="off"
             />
           </div>
           <div class="field">
-            <label for="mode-select">Verhalten</label>
+            <label for="mode-select" data-i18n="labelBehavior">Behavior</label>
             <select id="mode-select">
-              <option value="accept" selected>Automatisch akzeptieren</option>
-              <option value="ignore">Nicht eingreifen</option>
+              <option value="accept" selected data-i18n="modeAccept">Accept automatically</option>
+              <option value="ignore" data-i18n="modeIgnore">Do not intervene</option>
             </select>
           </div>
           <div class="field">
-            <label for="note-input">Notiz (optional)</label>
+            <label for="note-input" data-i18n="labelNoteOptional">Note (optional)</label>
             <input
               id="note-input"
               type="text"
-              placeholder="z. B. Tracking benötigt"
+              data-i18n-placeholder="placeholderNote"
+              placeholder="e.g. Tracking required"
               maxlength="120"
             />
           </div>
           <div class="field field-submit">
-            <button type="submit" class="btn btn-mint">Hinzufügen</button>
+            <button type="submit" class="btn btn-mint" data-i18n="btnAdd">Add</button>
           </div>
         </form>
 
         <div class="search-row">
-          <label for="wl-search" class="sr-only">Whitelist durchsuchen</label>
-          <input id="wl-search" type="search" placeholder="Whitelist filtern…" />
-          <span id="wl-count" class="count-label">0 Einträge</span>
+          <label for="wl-search" class="sr-only" data-i18n="wlSearchAria">Filter whitelist</label>
+          <input
+            id="wl-search"
+            type="search"
+            data-i18n-placeholder="wlSearchPlaceholder"
+            placeholder="Filter whitelist…"
+          />
+          <span id="wl-count" class="count-label"></span>
         </div>
 
-        <div id="wl-empty" class="empty-state" hidden>
-          Noch keine Domains auf der Whitelist. Füge oben eine Domain wie <code>payback.de</code> hinzu.
+        <div id="wl-empty" class="empty-state" hidden data-i18n="wlEmpty">
+          No domains on the whitelist yet. Add a domain such as payback.de above.
         </div>
 
         <ul id="wl-list" class="wl-list"></ul>
       </section>
 
       <section class="panel" aria-labelledby="settings-heading">
-        <h2 id="settings-heading">Allgemeine Einstellungen</h2>
+        <h2 id="settings-heading" data-i18n="settingsHeading">General settings</h2>
         <div class="settings-list">
           <label class="setting-row">
             <div>
-              <strong>Erweiterung aktiv</strong>
-              <p>Lehnt Cookie-Banner automatisch auf allen Webseiten außerhalb der Whitelist ab.</p>
+              <strong data-i18n="setEnabledTitle">Extension enabled</strong>
+              <p data-i18n="setEnabledDesc">
+                Automatically rejects cookie banners on all websites outside the whitelist.
+              </p>
             </div>
             <input id="set-enabled" type="checkbox" />
           </label>
 
           <label class="setting-row">
             <div>
-              <strong>Deutsch-/Englische Fallback-Heuristik</strong>
-              <p>
-                Erkennt zusätzliche Cookie-Banner, falls kein bekanntes CMP-Regelwerk greift.
+              <strong data-i18n="setHeuristicTitle">German / English fallback heuristic</strong>
+              <p data-i18n="setHeuristicDesc">
+                Detects additional cookie banners when no built-in CMP rule matches.
               </p>
             </div>
             <input id="set-heuristic" type="checkbox" />
@@ -115,11 +133,13 @@
 
           <label class="setting-row">
             <div>
-              <strong>Unvermeidbare Banner automatisch akzeptieren (z. B. PUR-Abo-Paywalls)</strong>
-              <p>
-                Wenn eine Webseite keine kostenlose Ablehnen-Option anbietet (z. B. PUR-Abo oder
-                reine Hinweis-Banner), wird stattdessen automatisch akzeptiert, damit du ohne
-                Unterbrechung weiterlesen kannst.
+              <strong data-i18n="setUnavoidableTitle">
+                Auto-accept unavoidable banners (e.g. pay-or-OK walls)
+              </strong>
+              <p data-i18n="setUnavoidableDesc">
+                If a site offers no free reject option (e.g. pay-or-OK walls or notice-only
+                banners), automatically continues via the free accept button instead of blocking the
+                page.
               </p>
             </div>
             <input id="set-unavoidable" type="checkbox" />
@@ -127,10 +147,10 @@
 
           <label class="setting-row">
             <div>
-              <strong>Global Privacy Control (<code>Sec-GPC: 1</code>)</strong>
-              <p>
-                Sendet das standardisierte Datenschutz-Signal an Webseiten. Wird auf
-                Whitelist-Domains automatisch deaktiviert.
+              <strong data-i18n="setGpcTitle">Global Privacy Control (Sec-GPC: 1)</strong>
+              <p data-i18n="setGpcDesc">
+                Sends the standardized privacy signal to websites. Automatically disabled on
+                whitelisted domains.
               </p>
             </div>
             <input id="set-gpc" type="checkbox" />
@@ -141,26 +161,28 @@
       <section class="panel" aria-labelledby="log-heading">
         <div class="panel-head">
           <div>
-            <h2 id="log-heading">Letzte Aktivitäten (lokal)</h2>
-            <p class="panel-desc">
-              Die letzten 50 Aktionen werden ausschließlich lokal in deinem Browser gespeichert.
+            <h2 id="log-heading" data-i18n="logHeading">Recent activity (local)</h2>
+            <p class="panel-desc" data-i18n="logDesc">
+              The last 50 actions are stored exclusively locally in your browser.
             </p>
           </div>
-          <button id="clear-log-btn" type="button" class="btn btn-secondary">Protokoll leeren</button>
+          <button id="clear-log-btn" type="button" class="btn btn-secondary" data-i18n="btnClearLog">
+            Clear log
+          </button>
         </div>
 
-        <div id="log-empty" class="empty-state" hidden>
-          Noch keine Banner-Aktionen protokolliert.
+        <div id="log-empty" class="empty-state" hidden data-i18n="logEmpty">
+          No banner actions recorded yet.
         </div>
 
         <div id="log-table-wrap" class="table-wrap" hidden>
           <table id="log-table" class="log-table">
             <thead>
               <tr>
-                <th>Zeit</th>
-                <th>Domain</th>
-                <th>Aktion</th>
-                <th>Erkennung</th>
+                <th data-i18n="colTime">Time</th>
+                <th data-i18n="colDomain">Domain</th>
+                <th data-i18n="colAction">Action</th>
+                <th data-i18n="colDetection">Detection</th>
                 <th></th>
               </tr>
             </thead>

@@ -1,5 +1,6 @@
 import { startAutoConsentRunner } from '../src/engine/autoconsent-runner';
 import { startHeuristicWatcher } from '../src/engine/heuristic-fallback';
+import { t } from '../src/shared/i18n';
 import type { ResolvedPolicy } from '../src/shared/types';
 
 export default defineContentScript({
@@ -81,7 +82,9 @@ export default defineContentScript({
         shouldSkip: () => alreadyReported || runner.isHandled(),
         onSuccess: (match) => {
           const prefix =
-            match.action === 'accepted-unavoidable' ? 'Unvermeidbar' : 'Heuristik';
+            match.action === 'accepted-unavoidable'
+              ? t('sourceUnavoidable')
+              : t('sourceHeuristic');
           const label = match.label ? `${prefix} (${match.label})` : prefix;
           reportAction(label, 'heuristic', match.action);
         },

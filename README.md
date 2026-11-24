@@ -1,39 +1,42 @@
 # Riczone Cookie Guard
 
-Datenschutzfreundliche Browser-Erweiterung (**Manifest V3**) für **Google Chrome**, **Mozilla Firefox** und **Firefox für Android**, die Cookie-Banner automatisch ablehnt – mit flexibler Whitelist und Global Privacy Control (`Sec-GPC: 1`).
+**English** · [Deutsch](./README.de.md)
 
-## Funktionen
+Privacy-friendly browser extension (**Manifest V3**) for **Google Chrome**, **Mozilla Firefox**, and **Firefox for Android** that automatically rejects cookie banners – featuring a flexible whitelist, bilingual UI (English & German), and Global Privacy Control (`Sec-GPC: 1`).
 
-- **Automatisches Ablehnen:** Nutzt über 1.500 CMP-Regeln (`@duckduckgo/autoconsent`) plus eine deutsch-/englischsprachige Fallback-Heuristik (inkl. Shadow DOM), um Cookie-Banner automatisch abzulehnen.
-- **Flexible Whitelist:** Domains wie `payback.de` (inkl. Subdomains, optional auch Exakt-Matches `=host` oder Wildcards `*.domain.de`) per 1-Klick im Popup oder in den Einstellungen freigeben – standardmäßig mit *Automatisch akzeptieren* oder optional *Nicht eingreifen*.
-- **Unvermeidbare Banner (abschaltbar):** Optionale Einstellung, um Pay-or-OK-/PUR-Abo-Paywalls (die keine kostenlose Ablehnen-Option anbieten) automatisch über die kostenlose Weiter-Option zu schließen, ohne jemals kostenpflichtige Abo-Buttons zu klicken.
-- **Global Privacy Control (`Sec-GPC: 1`):** Sendet das standardisierte Datenschutz-Signal als HTTP-Header und `navigator.globalPrivacyControl` – auf Whitelist-Domains automatisch deaktiviert.
-- **Datenschutz & Speicherung:** Cookie-Banner werden direkt im Browser verarbeitet – Riczone Cookie Guard verwendet keinen eigenen Server und erhebt keine Telemetrie (`data_collection_permissions: ["none"]`). Statistik und Aktionsprotokoll (letzte 50 Einträge) bleiben lokal (`browser.storage.local`). Einstellungen und Whitelist werden über `browser.storage.sync` (mit lokalem Fallback) abgelegt und können dadurch über die eingebaute Browser-Synchronisierung zwischen Geräten synchronisiert werden.
+## Features
 
-## Entwicklung & Build
+- **Automatic Cookie Rejection:** Combines 1,500+ CMP rules (`@duckduckgo/autoconsent`) with a German/English fallback heuristic (including open Shadow DOMs) to reject cookie banners automatically.
+- **Flexible Whitelist:** Allow domains such as `payback.de` (automatically matching subdomains, plus optional exact `=host` or wildcard `*.domain.com` rules) with one click in the popup or via the settings page – defaulting to *Accept automatically*, or optionally *Do not intervene*.
+- **Unavoidable Banners (optional toggle):** Can automatically continue on pay-or-OK / PUR-subscription walls that offer no free reject option, without ever clicking paid subscription offers.
+- **Global Privacy Control (`Sec-GPC: 1`):** Sends the standardized privacy signal via HTTP header and `navigator.globalPrivacyControl` – automatically disabled on whitelisted domains.
+- **Bilingual UI (EN / DE):** Automatically adapts to your browser language (`_locales/en` and `_locales/de`).
+- **Privacy & Storage:** Cookie banners are processed directly in the browser – Riczone Cookie Guard uses no own server and collects no telemetry (`data_collection_permissions: ["none"]`). Statistics and the activity log (last 50 entries) remain strictly local (`browser.storage.local`). Settings and the whitelist are stored via `browser.storage.sync` (with a local fallback) so they can sync across devices using your browser's built-in sync.
 
-Voraussetzung: Node.js 22+ (empfohlen 24.x) und Python 3 (für den ZIP-Export).
+## Development & Build
+
+Requirements: Node.js 22+ (recommended 24.x) and Python 3 (for ZIP packaging).
 
 ```bash
-npm install           # Abhängigkeiten installieren
-npm run typecheck     # TypeScript-Prüfung
-npm test              # Unit-Tests (Vitest)
-npm run build:chrome  # Chrome MV3 Build (.output/chrome-mv3)
-npm run build:firefox # Firefox MV3 Build (.output/firefox-mv3)
-npm run build:all     # Beide Browser bauen
-npm run package       # Baut & erstellt ZIP-Archive in dist-packages/
-npm run test:e2e      # Browser-E2E-Tests (Playwright)
+npm install           # Install dependencies
+npm run typecheck     # TypeScript check
+npm test              # Unit tests (Vitest)
+npm run build:chrome  # Chrome MV3 build (.output/chrome-mv3)
+npm run build:firefox # Firefox MV3 build (.output/firefox-mv3, Desktop & Android)
+npm run build:all     # Build both targets
+npm run package       # Build & create release ZIP archives in dist-packages/
+npm run test:e2e      # Browser E2E tests (Playwright)
 ```
 
-## Lokal installieren
+## Local Installation
 
-- **Google Chrome:** `chrome://extensions` öffnen → *Entwicklermodus* aktivieren → **Entpackte Erweiterung laden** → `.output/chrome-mv3` auswählen.
-- **Mozilla Firefox (temporär):** `about:debugging#/runtime/this-firefox` öffnen → **Temporäres Add-on laden…** → `.output/firefox-mv3/manifest.json` auswählen.
-- **Mozilla Firefox (dauerhaft signiert via AMO):** Siehe [AMO-SIGNING.md](./AMO-SIGNING.md).
+- **Google Chrome:** Open `chrome://extensions` → enable *Developer mode* → **Load unpacked** → select `.output/chrome-mv3`.
+- **Mozilla Firefox (temporary):** Open `about:debugging#/runtime/this-firefox` → **Load Temporary Add-on…** → select `.output/firefox-mv3/manifest.json`.
+- **Mozilla Firefox Desktop & Android (signed via AMO):** See [AMO-SIGNING.md](./AMO-SIGNING.md).
 
-## Lizenz & Kontakt
+## License & Contact
 
-- **Eigener Code (Riczone Cookie Guard):** Veröffentlicht unter der [MIT-Lizenz](./LICENSE).
-- **Drittanbieter-Bibliothek (`@duckduckgo/autoconsent` v18.10.0):** Lizenz unter der **Mozilla Public License 2.0 (MPL-2.0)**. Der vollständige Lizenzhinweis inkl. Quellen-Links zu dieser Version befindet sich in [public/THIRD-PARTY-LICENSES.txt](./public/THIRD-PARTY-LICENSES.txt) und ist in beiden Browser-Paketen enthalten ([Originalquellen v18.10.0](https://github.com/duckduckgo/autoconsent/tree/v18.10.0)).
+- **Own code (Riczone Cookie Guard):** Licensed under the [MIT License](./LICENSE).
+- **Third-party library (`@duckduckgo/autoconsent` v18.10.0):** Licensed under the **Mozilla Public License 2.0 (MPL-2.0)**. The complete third-party license notice including upstream source links for `v18.10.0` is stored in [public/THIRD-PARTY-LICENSES.txt](./public/THIRD-PARTY-LICENSES.txt) and bundled into both browser packages ([upstream source v18.10.0](https://github.com/duckduckgo/autoconsent/tree/v18.10.0)).
 
-Kontakt: [riczone.digital@gmail.com](mailto:riczone.digital@gmail.com) · [riczone.de](https://riczone.de)
+Contact: [riczone.digital@gmail.com](mailto:riczone.digital@gmail.com) · [riczone.de](https://riczone.de)

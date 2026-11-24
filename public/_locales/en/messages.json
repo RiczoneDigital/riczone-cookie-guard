@@ -1,0 +1,354 @@
+{
+  "extName": {
+    "message": "Riczone Cookie Guard"
+  },
+  "extShortName": {
+    "message": "Cookie Guard"
+  },
+  "extDescription": {
+    "message": "Automatically rejects cookie banners and auto-accepts them on whitelisted sites (e.g. Payback) – with Global Privacy Control."
+  },
+  "badgeOff": {
+    "message": "OFF"
+  },
+  "popupToggleAria": {
+    "message": "Enable or disable extension"
+  },
+  "popupPermissionNotice": {
+    "message": "Firefox still needs website access permission to detect and handle cookie banners automatically."
+  },
+  "popupPermissionGrantBtn": {
+    "message": "Grant website access"
+  },
+  "popupCurrentSite": {
+    "message": "Current website"
+  },
+  "popupLoading": {
+    "message": "Loading…"
+  },
+  "popupUnsupported": {
+    "message": "Not supported"
+  },
+  "popupWhitelistModeLabel": {
+    "message": "Whitelist behavior:"
+  },
+  "modeAccept": {
+    "message": "Accept automatically"
+  },
+  "modeIgnore": {
+    "message": "Do not intervene"
+  },
+  "statsAria": {
+    "message": "Statistics"
+  },
+  "statRejected": {
+    "message": "Rejected"
+  },
+  "statWhitelistAccepted": {
+    "message": "Whitelist accepted"
+  },
+  "popupOpenOptions": {
+    "message": "Manage whitelist & settings"
+  },
+  "badgeSystemPage": {
+    "message": "System page"
+  },
+  "detailSystemPage": {
+    "message": "Browser internal pages do not show cookie banners."
+  },
+  "badgeDisabled": {
+    "message": "Disabled"
+  },
+  "detailDisabled": {
+    "message": "Riczone Cookie Guard is turned off globally."
+  },
+  "badgeWhitelistAccept": {
+    "message": "Whitelist: Accept"
+  },
+  "detailWhitelistAccept": {
+    "message": "Whitelisted ($PATTERN$) – cookies are accepted automatically.",
+    "placeholders": {
+      "pattern": { "content": "$1" }
+    }
+  },
+  "detailLastAccepted": {
+    "message": " Last accepted: $CMP$.",
+    "placeholders": {
+      "cmp": { "content": "$1" }
+    }
+  },
+  "badgeWhitelistIgnore": {
+    "message": "Whitelist: Ignore"
+  },
+  "detailWhitelistIgnore": {
+    "message": "Whitelisted ($PATTERN$) – cookie banner stays visible unchanged.",
+    "placeholders": {
+      "pattern": { "content": "$1" }
+    }
+  },
+  "gpcActiveSuffix": {
+    "message": " · GPC active"
+  },
+  "badgeRejected": {
+    "message": "Rejected"
+  },
+  "detailRejected": {
+    "message": "Banner automatically rejected ($CMP$)$GPC$.",
+    "placeholders": {
+      "cmp": { "content": "$1" },
+      "gpc": { "content": "$2" }
+    }
+  },
+  "badgeUnavoidable": {
+    "message": "Accepted (unavoidable)"
+  },
+  "detailUnavoidable": {
+    "message": "No free reject option available – continued automatically ($CMP$).",
+    "placeholders": {
+      "cmp": { "content": "$1" }
+    }
+  },
+  "badgeRejectActive": {
+    "message": "Reject active"
+  },
+  "detailRejectActive": {
+    "message": "Cookie banners are rejected automatically$GPC$.",
+    "placeholders": {
+      "gpc": { "content": "$1" }
+    }
+  },
+  "btnRemoveWhitelist": {
+    "message": "Remove from whitelist ($PATTERN$)",
+    "placeholders": {
+      "pattern": { "content": "$1" }
+    }
+  },
+  "btnAddWhitelist": {
+    "message": "Whitelist $DOMAIN$ (auto-accept)",
+    "placeholders": {
+      "domain": { "content": "$1" }
+    }
+  },
+  "fbPermissionGranted": {
+    "message": "Website access granted."
+  },
+  "fbPermissionFailed": {
+    "message": "Could not request website permission."
+  },
+  "fbEnabled": {
+    "message": "Riczone Cookie Guard enabled."
+  },
+  "fbDisabled": {
+    "message": "Riczone Cookie Guard disabled."
+  },
+  "fbWhitelistRemoved": {
+    "message": "Removed $PATTERN$ from whitelist – reloading page.",
+    "placeholders": {
+      "pattern": { "content": "$1" }
+    }
+  },
+  "fbWhitelistAdded": {
+    "message": "Added $PATTERN$ to whitelist (auto-accept) – reloading page.",
+    "placeholders": {
+      "pattern": { "content": "$1" }
+    }
+  },
+  "fbModeAccept": {
+    "message": "$PATTERN$: Cookies will be accepted automatically.",
+    "placeholders": {
+      "pattern": { "content": "$1" }
+    }
+  },
+  "fbModeIgnore": {
+    "message": "$PATTERN$: Banner will stay visible unchanged.",
+    "placeholders": {
+      "pattern": { "content": "$1" }
+    }
+  },
+  "optionsTitle": {
+    "message": "Riczone Cookie Guard – Settings"
+  },
+  "optionsSubtitle": {
+    "message": "Automatic cookie rejection, whitelist & privacy signals"
+  },
+  "statAcceptedShort": {
+    "message": "Accepted"
+  },
+  "wlHeading": {
+    "message": "Whitelist"
+  },
+  "wlDesc": {
+    "message": "On listed domains, cookies are accepted automatically by default (e.g. for Payback). You can switch any entry to 'Do not intervene' at any time. Subdomains are included automatically (payback.de also matches www.payback.de)."
+  },
+  "btnExportJson": {
+    "message": "Export JSON"
+  },
+  "btnImportJson": {
+    "message": "Import JSON"
+  },
+  "labelDomainPattern": {
+    "message": "Domain or pattern"
+  },
+  "placeholderDomainPattern": {
+    "message": "e.g. payback.de, *.shop.com or =www.example.com"
+  },
+  "labelBehavior": {
+    "message": "Behavior"
+  },
+  "labelNoteOptional": {
+    "message": "Note (optional)"
+  },
+  "placeholderNote": {
+    "message": "e.g. Tracking required"
+  },
+  "btnAdd": {
+    "message": "Add"
+  },
+  "wlSearchAria": {
+    "message": "Filter whitelist"
+  },
+  "wlSearchPlaceholder": {
+    "message": "Filter whitelist…"
+  },
+  "wlCountSingular": {
+    "message": "1 entry"
+  },
+  "wlCountPlural": {
+    "message": "$COUNT$ entries",
+    "placeholders": {
+      "count": { "content": "$1" }
+    }
+  },
+  "wlEmpty": {
+    "message": "No domains on the whitelist yet. Add a domain such as payback.de above."
+  },
+  "wlBehaviorAria": {
+    "message": "Behavior for $PATTERN$",
+    "placeholders": {
+      "pattern": { "content": "$1" }
+    }
+  },
+  "btnRemove": {
+    "message": "Remove"
+  },
+  "settingsHeading": {
+    "message": "General settings"
+  },
+  "setEnabledTitle": {
+    "message": "Extension enabled"
+  },
+  "setEnabledDesc": {
+    "message": "Automatically rejects cookie banners on all websites outside the whitelist."
+  },
+  "setHeuristicTitle": {
+    "message": "German / English fallback heuristic"
+  },
+  "setHeuristicDesc": {
+    "message": "Detects additional cookie banners when no built-in CMP rule matches."
+  },
+  "setUnavoidableTitle": {
+    "message": "Auto-accept unavoidable banners (e.g. pay-or-OK walls)"
+  },
+  "setUnavoidableDesc": {
+    "message": "If a site offers no free reject option (e.g. pay-or-OK walls or notice-only banners), automatically continues via the free accept button instead of blocking the page."
+  },
+  "setGpcTitle": {
+    "message": "Global Privacy Control (Sec-GPC: 1)"
+  },
+  "setGpcDesc": {
+    "message": "Sends the standardized privacy signal to websites. Automatically disabled on whitelisted domains."
+  },
+  "logHeading": {
+    "message": "Recent activity (local)"
+  },
+  "logDesc": {
+    "message": "The last 50 actions are stored exclusively locally in your browser."
+  },
+  "btnClearLog": {
+    "message": "Clear log"
+  },
+  "logEmpty": {
+    "message": "No banner actions recorded yet."
+  },
+  "colTime": {
+    "message": "Time"
+  },
+  "colDomain": {
+    "message": "Domain"
+  },
+  "colAction": {
+    "message": "Action"
+  },
+  "colDetection": {
+    "message": "Detection"
+  },
+  "btnWhitelistShort": {
+    "message": "Whitelist"
+  },
+  "toastBehaviorUpdated": {
+    "message": "Updated behavior for $PATTERN$.",
+    "placeholders": {
+      "pattern": { "content": "$1" }
+    }
+  },
+  "toastEntryRemoved": {
+    "message": "Removed $PATTERN$.",
+    "placeholders": {
+      "pattern": { "content": "$1" }
+    }
+  },
+  "toastEntrySaved": {
+    "message": "Whitelist entry saved."
+  },
+  "toastInvalidInput": {
+    "message": "Invalid input."
+  },
+  "toastLogWhitelisted": {
+    "message": "Added $DOMAIN$ to whitelist (auto-accept).",
+    "placeholders": {
+      "domain": { "content": "$1" }
+    }
+  },
+  "toastExported": {
+    "message": "Whitelist exported as JSON."
+  },
+  "toastImportFailed": {
+    "message": "Import failed."
+  },
+  "toastImported": {
+    "message": "Import successful ($COUNT$ new entries).",
+    "placeholders": {
+      "count": { "content": "$1" }
+    }
+  },
+  "toastSettingsSaved": {
+    "message": "Settings saved."
+  },
+  "toastLogCleared": {
+    "message": "Activity log cleared."
+  },
+  "errPatternEmpty": {
+    "message": "Please enter a domain (e.g. payback.de)."
+  },
+  "errPatternWildcard": {
+    "message": "Invalid pattern. Use e.g. payback.de, *.payback.de or =www.payback.de."
+  },
+  "errPatternUrl": {
+    "message": "The pasted URL does not contain a valid web domain."
+  },
+  "errPatternInvalid": {
+    "message": "Please enter a valid domain (e.g. payback.de)."
+  },
+  "errImportJson": {
+    "message": "The file does not contain valid JSON."
+  },
+  "errImportFormat": {
+    "message": "Invalid export format. Expected a whitelist file from Riczone Cookie Guard."
+  },
+  "sourceHeuristic": {
+    "message": "Heuristic"
+  },
+  "sourceUnavoidable": {
+    "message": "Unavoidable"
+  }
+}

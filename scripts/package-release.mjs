@@ -77,9 +77,28 @@ function validateManifests() {
   if (!chromeManifest.background?.service_worker) {
     throw new Error('Chrome-Manifest fehlt background.service_worker.');
   }
+  if (chromeManifest.default_locale !== 'en') {
+    throw new Error('Chrome-Manifest fehlt default_locale: "en".');
+  }
 
   if (firefoxManifest.manifest_version !== 3) {
     throw new Error('Firefox-Manifest ist nicht Manifest V3.');
+  }
+  if (firefoxManifest.default_locale !== 'en') {
+    throw new Error('Firefox-Manifest fehlt default_locale: "en".');
+  }
+
+  for (const targetDir of [CHROME_DIR, FIREFOX_DIR]) {
+    const enPath = path.join(targetDir, '_locales', 'en', 'messages.json');
+    const dePath = path.join(targetDir, '_locales', 'de', 'messages.json');
+    if (!fs.existsSync(enPath) || !fs.existsSync(dePath)) {
+      throw new Error(`Fehlende _locales-Dateien in ${targetDir}.`);
+    }
+    const enKeys = Object.keys(JSON.parse(fs.readFileSync(enPath, 'utf8'))).sort();
+    const deKeys = Object.keys(JSON.parse(fs.readFileSync(dePath, 'utf8'))).sort();
+    if (JSON.stringify(enKeys) !== JSON.stringify(deKeys)) {
+      throw new Error(`_locales en/de Schlüssel weichen ab in ${targetDir}.`);
+    }
   }
   const gecko = firefoxManifest.browser_specific_settings?.gecko;
   const geckoAndroid = firefoxManifest.browser_specific_settings?.gecko_android;

@@ -10,6 +10,7 @@ import {
   type WhitelistExportPayload,
   type WhitelistMode,
 } from './types';
+import { t } from './i18n';
 import { validateAndNormalizePattern } from './matcher';
 
 const SETTINGS_KEY = 'rcg_settings_v1';
@@ -251,7 +252,7 @@ export function parseWhitelistImportJson(
   try {
     parsed = JSON.parse(jsonText);
   } catch {
-    return { ok: false, error: 'Die Datei enthält kein gültiges JSON.' };
+    return { ok: false, error: t('errImportJson') };
   }
 
   const rawList = Array.isArray(parsed)
@@ -263,7 +264,7 @@ export function parseWhitelistImportJson(
   if (!rawList) {
     return {
       ok: false,
-      error: 'Ungültiges Export-Format. Erwartet wird eine Whitelist-Liste aus Riczone Cookie Guard.',
+      error: t('errImportFormat'),
     };
   }
 

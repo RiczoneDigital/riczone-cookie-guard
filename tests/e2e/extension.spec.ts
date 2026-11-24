@@ -331,4 +331,66 @@ test.describe('Riczone Cookie Guard – End-to-End', () => {
       fullPage: true,
     });
   });
+
+  test('renders English UI on en-US locale and German UI on de locale', async () => {
+    const executablePath = findChromiumExecutable();
+
+    // English browser check
+    const enDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rcg-e2e-en-'));
+    const enCtx = await chromium.launchPersistentContext(enDir, {
+      headless: false,
+      executablePath,
+      locale: 'en-US',
+      args: [
+        '--lang=en-US',
+        `--disable-extensions-except=${EXTENSION_PATH}`,
+        `--load-extension=${EXTENSION_PATH}`,
+        '--no-first-run',
+      ],
+    });
+    try {
+      let [sw] = enCtx.serviceWorkers();
+      if (!sw) sw = await enCtx.waitForEvent('serviceworker', { timeout: 15_000 });
+      const id = new URL(sw.url()).host;
+
+      const enPopup = await enCtx.newPage();
+      await enPopup.setViewportSize({ width: 360, height: 420 });
+      await enPopup.goto(`chrome-extension://${id}/popup.html`, { waitUntil: 'domcontentloaded' });
+      await expect(enPopup.locator('#open-options-btn')).toHaveText('Manage whitelist & settings');
+      await expect(enPopup.locator('.stat-label').first()).toHaveText('Rejected');
+      await enPopup.screenshot({ path: path.join(SCREENSHOT_DIR, 'popup-en.png'), fullPage: true });
+    } finally {
+      await enCtx.close();
+      fs.rmSync(enDir, { recursive: true, force: true });
+    }
+
+    // German browser check
+    const deDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rcg-e2e-de-'));
+    const deCtx = await chromium.launchPersistentContext(deDir, {
+      headless: false,
+      executablePath,
+      locale: 'de-DE',
+      args: [
+        '--lang=de',
+        `--disable-extensions-except=${EXTENSION_PATH}`,
+        `--load-extension=${EXTENSION_PATH}`,
+        '--no-first-run',
+      ],
+    });
+    try {
+      let [sw] = deCtx.serviceWorkers();
+      if (!sw) sw = await deCtx.waitForEvent('serviceworker', { timeout: 15_000 });
+      const id = new URL(sw.url()).host;
+
+      const dePopup = await deCtx.newPage();
+      await dePopup.setViewportSize({ width: 360, height: 420 });
+      await dePopup.goto(`chrome-extension://${id}/popup.html`, { waitUntil: 'domcontentloaded' });
+      await expect(dePopup.locator('#open-options-btn')).toHaveText('Whitelist & Einstellungen verwalten');
+      await expect(dePopup.locator('.stat-label').first()).toHaveText('Abgelehnt');
+      await dePopup.screenshot({ path: path.join(SCREENSHOT_DIR, 'popup-de.png'), fullPage: true });
+    } finally {
+      await deCtx.close();
+      fs.rmSync(deDir, { recursive: true, force: true });
+    }
+  });
 });
