@@ -84,7 +84,7 @@ export interface WhitelistExportPayload {
 export const DEFAULT_SETTINGS: ExtensionSettings = {
   enabled: true,
   heuristicFallback: true,
-  acceptUnavoidableBanners: true,
+  acceptUnavoidableBanners: false,
   sendGpc: true,
   whitelist: [],
 };

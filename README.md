@@ -2,16 +2,16 @@
 
 **English** · [Deutsch](./README.de.md)
 
-Privacy-friendly browser extension (**Manifest V3**) for **Google Chrome**, **Mozilla Firefox**, and **Firefox for Android** that automatically rejects cookie banners – featuring a flexible whitelist, bilingual UI (English & German), and Global Privacy Control (`Sec-GPC: 1`).
+Privacy-friendly browser extension (**Manifest V3**) for **Google Chrome**, **Mozilla Firefox**, and **Firefox for Android** that automatically rejects cookie banners, with a flexible whitelist, bilingual UI (English & German), and Global Privacy Control (`Sec-GPC: 1`).
 
 ## Features
 
 - **Automatic Cookie Rejection:** Combines 1,500+ CMP rules (`@duckduckgo/autoconsent`) with a German/English fallback heuristic (including open Shadow DOMs) to reject cookie banners automatically.
-- **Flexible Whitelist:** Allow domains such as `payback.de` (automatically matching subdomains, plus optional exact `=host` or wildcard `*.domain.com` rules) with one click in the popup or via the settings page – defaulting to *Accept automatically*, or optionally *Do not intervene*.
-- **Unavoidable Banners (optional toggle):** Can automatically continue on pay-or-OK / PUR-subscription walls that offer no free reject option, without ever clicking paid subscription offers.
-- **Global Privacy Control (`Sec-GPC: 1`):** Sends the standardized privacy signal via HTTP header and `navigator.globalPrivacyControl` – automatically disabled on whitelisted domains.
+- **Flexible Whitelist:** Allow domains such as `payback.de` (automatically matching subdomains, plus optional exact `=host` or wildcard `*.domain.com` rules) with one click in the popup or via the settings page. Entries default to *Accept automatically*, or optionally *Do not intervene*.
+- **Unavoidable Banners (off by default):** Optional setting to automatically continue on pay-or-OK / PUR-subscription walls that offer no free reject option, without ever clicking paid subscription offers.
+- **Global Privacy Control (`Sec-GPC: 1`):** Sends the standardized privacy signal via HTTP header and `navigator.globalPrivacyControl`. Automatically disabled on whitelisted domains.
 - **Bilingual UI (EN / DE):** Automatically adapts to your browser language (`_locales/en` and `_locales/de`).
-- **Privacy & Storage:** Cookie banners are processed directly in the browser – Riczone Cookie Guard uses no own server and collects no telemetry (`data_collection_permissions: ["none"]`). Statistics and the activity log (last 50 entries) remain strictly local (`browser.storage.local`). Settings and the whitelist are stored via `browser.storage.sync` (with a local fallback) so they can sync across devices using your browser's built-in sync.
+- **Privacy & Storage:** Cookie banners are processed directly in the browser. Riczone Cookie Guard uses no own server and collects no telemetry (`data_collection_permissions: ["none"]`). Statistics and the activity log (last 50 entries) remain strictly local (`browser.storage.local`). Settings and the whitelist are stored via `browser.storage.sync` (with a local fallback) so they can sync across devices using your browser's built-in sync.
 
 ## Development & Build
 

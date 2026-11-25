@@ -234,11 +234,12 @@ test.describe('Riczone Cookie Guard – End-to-End', () => {
     await page.goto(`http://127.0.0.1:${server.port}/onetrust`, { waitUntil: 'domcontentloaded' });
     await expect(page.locator('#result')).toHaveText('rejected', { timeout: 8_000 });
 
-    // 1c. Default mode on unavoidable PUR-Abo paywall: auto-accepts AKZEPTIEREN UND WEITER
+    // 1c. Default mode on unavoidable PUR-Abo paywall: disabled by default -> remains pending
     await page.goto(`http://127.0.0.1:${server.port}/pur-paywall`, {
       waitUntil: 'domcontentloaded',
     });
-    await expect(page.locator('#result')).toHaveText('accepted-pur', { timeout: 8_000 });
+    await page.waitForTimeout(2600);
+    await expect(page.locator('#result')).toHaveText('pending');
 
     // 2. Open Options page, verify stats & add 127.0.0.1 to Whitelist (default: accept)
     const optionsPage = await context.newPage();
@@ -277,20 +278,26 @@ test.describe('Riczone Cookie Guard – End-to-End', () => {
     await page.waitForTimeout(1500);
     await expect(page.locator('#result')).toHaveText('pending');
 
-    // 5. Verify Settings toggle for unavoidable banners: turning it OFF leaves /pur-paywall untouched
+    // 5. Verify Settings toggle for unavoidable banners: OFF by default, sticks when enabled, and accepts /pur-paywall
     await optionsPage.click('.wl-item-controls .btn-danger');
-    await expect(optionsPage.locator('#set-unavoidable')).toBeChecked();
-    await optionsPage.uncheck('#set-unavoidable');
     await expect(optionsPage.locator('#set-unavoidable')).not.toBeChecked();
+    await optionsPage.check('#set-unavoidable');
+    await expect(optionsPage.locator('#set-unavoidable')).toBeChecked();
+
+    // Reload options page to verify the checkbox persists and does not snap back
+    await optionsPage.reload({ waitUntil: 'domcontentloaded' });
+    await expect(optionsPage.locator('#set-unavoidable')).toBeChecked({ timeout: 5_000 });
 
     await page.goto(`http://127.0.0.1:${server.port}/pur-paywall`, {
       waitUntil: 'domcontentloaded',
     });
-    await page.waitForTimeout(2600);
-    await expect(page.locator('#result')).toHaveText('pending');
+    await expect(page.locator('#result')).toHaveText('accepted-pur', { timeout: 8_000 });
 
-    // Re-enable unavoidable accept toggle
-    await optionsPage.check('#set-unavoidable');
+    // Disable unavoidable accept toggle again and verify it stays off
+    await optionsPage.uncheck('#set-unavoidable');
+    await expect(optionsPage.locator('#set-unavoidable')).not.toBeChecked();
+    await optionsPage.reload({ waitUntil: 'domcontentloaded' });
+    await expect(optionsPage.locator('#set-unavoidable')).not.toBeChecked({ timeout: 5_000 });
 
     // 6. Verify streamlined Popup: exactly 2 stat counters and no Payback/Cashback session block
     const popupPage = await context.newPage();

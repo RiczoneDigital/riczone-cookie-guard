@@ -42,6 +42,13 @@ const els = {
 
 let currentState: OptionsStateResponse | null = null;
 let toastTimer: number | null = null;
+let stateVersion = 0;
+let toggleSaveQueue: Promise<void> = Promise.resolve();
+
+const toggleInputs = [els.setEnabled, els.setHeuristic, els.setUnavoidable, els.setGpc];
+for (const input of toggleInputs) {
+  input.disabled = true;
+}
 
 function showToast(message: string, kind: 'info' | 'error' = 'info'): void {
   els.toast.textContent = message;
@@ -226,14 +233,21 @@ function render(state: OptionsStateResponse): void {
   els.setHeuristic.checked = state.settings.heuristicFallback;
   els.setUnavoidable.checked = state.settings.acceptUnavoidableBanners;
   els.setGpc.checked = state.settings.sendGpc;
+  for (const input of toggleInputs) {
+    input.disabled = false;
+  }
   renderWhitelist();
   renderLog();
 }
 
 async function loadOptions(): Promise<void> {
+  const version = ++stateVersion;
   const state = (await browser.runtime.sendMessage({
     type: 'rcg:get-options-state',
   })) as OptionsStateResponse;
+  if (version !== stateVersion) {
+    return;
+  }
   render(state);
 }
 
@@ -298,24 +312,46 @@ els.importInput.addEventListener('change', async () => {
   await loadOptions();
 });
 
-const syncToggleSettings = async () => {
-  await browser.runtime.sendMessage({
-    type: 'rcg:update-settings',
-    patch: {
-      enabled: els.setEnabled.checked,
-      heuristicFallback: els.setHeuristic.checked,
-      acceptUnavoidableBanners: els.setUnavoidable.checked,
-      sendGpc: els.setGpc.checked,
-    },
-  });
-  showToast(t('toastSettingsSaved'));
-  await loadOptions();
-};
+type BooleanSettingKey =
+  | 'enabled'
+  | 'heuristicFallback'
+  | 'acceptUnavoidableBanners'
+  | 'sendGpc';
 
-els.setEnabled.addEventListener('change', syncToggleSettings);
-els.setHeuristic.addEventListener('change', syncToggleSettings);
-els.setUnavoidable.addEventListener('change', syncToggleSettings);
-els.setGpc.addEventListener('change', syncToggleSettings);
+function bindToggleSetting(input: HTMLInputElement, key: BooleanSettingKey): void {
+  input.addEventListener('change', () => {
+    const nextValue = input.checked;
+    const version = ++stateVersion;
+    toggleSaveQueue = toggleSaveQueue.then(async () => {
+      try {
+        const resp = (await browser.runtime.sendMessage({
+          type: 'rcg:update-settings',
+          patch: { [key]: nextValue },
+        })) as { ok?: boolean; settings?: ExtensionSettings; error?: string } | undefined;
+
+        if (!resp?.ok || !resp.settings) {
+          throw new Error(resp?.error || t('toastInvalidInput'));
+        }
+
+        if (currentState) {
+          currentState = { ...currentState, settings: resp.settings };
+          if (version === stateVersion) {
+            render(currentState);
+          }
+        }
+        showToast(t('toastSettingsSaved'));
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : t('toastInvalidInput'), 'error');
+        await loadOptions();
+      }
+    });
+  });
+}
+
+bindToggleSetting(els.setEnabled, 'enabled');
+bindToggleSetting(els.setHeuristic, 'heuristicFallback');
+bindToggleSetting(els.setUnavoidable, 'acceptUnavoidableBanners');
+bindToggleSetting(els.setGpc, 'sendGpc');
 
 els.clearLogBtn.addEventListener('click', async () => {
   await browser.runtime.sendMessage({ type: 'rcg:clear-log' });

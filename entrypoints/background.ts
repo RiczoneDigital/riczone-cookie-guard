@@ -25,6 +25,16 @@ import type {
 const GPC_RULE_ID = 1001;
 
 const tabStatusMap = new Map<number, TabStatus>();
+let settingsMutationQueue: Promise<unknown> = Promise.resolve();
+
+function enqueueSettingsMutation<T>(task: () => Promise<T>): Promise<T> {
+  const next = settingsMutationQueue.then(task, task);
+  settingsMutationQueue = next.then(
+    () => undefined,
+    () => undefined,
+  );
+  return next;
+}
 
 function setGlobalPrivacyControlMainWorld(): void {
   try {
@@ -135,12 +145,16 @@ async function syncGpcHeaderRule(settings: ExtensionSettings): Promise<void> {
   }
 }
 
-async function updateBadgeForTab(tabId: number, status?: TabStatus): Promise<void> {
+async function updateBadgeForTab(
+  tabId: number,
+  status?: TabStatus,
+  loadedSettings?: ExtensionSettings,
+): Promise<void> {
   if (!browser.action?.setBadgeText) {
     return;
   }
 
-  const settings = await loadSettings();
+  const settings = loadedSettings ?? (await loadSettings());
 
   let text = '';
   let bg = '#0b0d14';
@@ -175,31 +189,33 @@ async function updateBadgeForTab(tabId: number, status?: TabStatus): Promise<voi
   }
 }
 
-async function refreshAllTabBadges(): Promise<void> {
+async function refreshAllTabBadges(loadedSettings?: ExtensionSettings): Promise<void> {
   try {
     const tabs = await browser.tabs.query({});
-    const settings = await loadSettings();
-    for (const tab of tabs) {
-      if (typeof tab.id !== 'number') {
-        continue;
-      }
-      const existing = tabStatusMap.get(tab.id);
-      const resolved = resolvePolicyForUrl(tab.url, settings);
-      const updated: TabStatus = {
-        tabId: tab.id,
-        domain: resolved.domain ?? existing?.domain ?? '',
-        policy: resolved.policy,
-        reason: resolved.reason,
-        matchedEntry: resolved.matchedEntry,
-        lastAction: existing?.lastAction,
-        lastCmp: existing?.lastCmp,
-        lastSource: existing?.lastSource,
-        actionCount: existing?.actionCount ?? 0,
-        updatedAt: Date.now(),
-      };
-      tabStatusMap.set(tab.id, updated);
-      await updateBadgeForTab(tab.id, updated);
-    }
+    const settings = loadedSettings ?? (await loadSettings());
+    await Promise.all(
+      tabs.map(async (tab) => {
+        if (typeof tab.id !== 'number') {
+          return;
+        }
+        const existing = tabStatusMap.get(tab.id);
+        const resolved = resolvePolicyForUrl(tab.url, settings);
+        const updated: TabStatus = {
+          tabId: tab.id,
+          domain: resolved.domain ?? existing?.domain ?? '',
+          policy: resolved.policy,
+          reason: resolved.reason,
+          matchedEntry: resolved.matchedEntry,
+          lastAction: existing?.lastAction,
+          lastCmp: existing?.lastCmp,
+          lastSource: existing?.lastSource,
+          actionCount: existing?.actionCount ?? 0,
+          updatedAt: Date.now(),
+        };
+        tabStatusMap.set(tab.id, updated);
+        await updateBadgeForTab(tab.id, updated, settings);
+      }),
+    );
   } catch {
     // Ignore if tabs cannot be queried
   }
@@ -208,7 +224,7 @@ async function refreshAllTabBadges(): Promise<void> {
 async function handleSettingsChanged(settings: ExtensionSettings): Promise<ExtensionSettings> {
   const saved = await saveSettings(settings);
   await syncGpcHeaderRule(saved);
-  await refreshAllTabBadges();
+  void refreshAllTabBadges(saved);
   return saved;
 }
 
@@ -419,63 +435,71 @@ export default defineBackground(() => {
         }
 
         case 'rcg:set-enabled': {
-          const settings = await loadSettings();
-          settings.enabled = message.enabled;
-          const saved = await handleSettingsChanged(settings);
-          return { ok: true, settings: saved };
+          return enqueueSettingsMutation(async () => {
+            const settings = await loadSettings();
+            settings.enabled = message.enabled;
+            const saved = await handleSettingsChanged(settings);
+            return { ok: true, settings: saved };
+          });
         }
 
         case 'rcg:upsert-whitelist': {
-          const validated = validateAndNormalizePattern(message.pattern);
-          if (!validated.valid || !validated.normalized) {
-            return { ok: false, error: validated.error };
-          }
-          const settings = await loadSettings();
-          const mode: WhitelistMode = message.mode === 'ignore' ? 'ignore' : 'accept';
-          const existingIdx = settings.whitelist.findIndex(
-            (item) => item.pattern === validated.normalized,
-          );
-          const note = message.note?.trim() ? message.note.trim().slice(0, 120) : undefined;
+          return enqueueSettingsMutation(async () => {
+            const validated = validateAndNormalizePattern(message.pattern);
+            if (!validated.valid || !validated.normalized) {
+              return { ok: false, error: validated.error };
+            }
+            const settings = await loadSettings();
+            const mode: WhitelistMode = message.mode === 'ignore' ? 'ignore' : 'accept';
+            const existingIdx = settings.whitelist.findIndex(
+              (item) => item.pattern === validated.normalized,
+            );
+            const note = message.note?.trim() ? message.note.trim().slice(0, 120) : undefined;
 
-          const existingEntry = existingIdx >= 0 ? settings.whitelist[existingIdx] : undefined;
-          if (existingEntry) {
-            settings.whitelist[existingIdx] = {
-              ...existingEntry,
-              mode,
-              note: note !== undefined ? note : existingEntry.note,
-            };
-          } else {
-            settings.whitelist.unshift({
-              id: generateId(),
-              pattern: validated.normalized,
-              mode,
-              note,
-              createdAt: Date.now(),
-            });
-          }
+            const existingEntry = existingIdx >= 0 ? settings.whitelist[existingIdx] : undefined;
+            if (existingEntry) {
+              settings.whitelist[existingIdx] = {
+                ...existingEntry,
+                mode,
+                note: note !== undefined ? note : existingEntry.note,
+              };
+            } else {
+              settings.whitelist.unshift({
+                id: generateId(),
+                pattern: validated.normalized,
+                mode,
+                note,
+                createdAt: Date.now(),
+              });
+            }
 
-          const saved = await handleSettingsChanged(settings);
-          return { ok: true, settings: saved };
+            const saved = await handleSettingsChanged(settings);
+            return { ok: true, settings: saved };
+          });
         }
 
         case 'rcg:remove-whitelist': {
-          const settings = await loadSettings();
-          settings.whitelist = settings.whitelist.filter(
-            (item) => item.id !== message.idOrPattern && item.pattern !== message.idOrPattern,
-          );
-          const saved = await handleSettingsChanged(settings);
-          return { ok: true, settings: saved };
+          return enqueueSettingsMutation(async () => {
+            const settings = await loadSettings();
+            settings.whitelist = settings.whitelist.filter(
+              (item) => item.id !== message.idOrPattern && item.pattern !== message.idOrPattern,
+            );
+            const saved = await handleSettingsChanged(settings);
+            return { ok: true, settings: saved };
+          });
         }
 
         case 'rcg:update-settings': {
-          const settings = await loadSettings();
-          const merged: ExtensionSettings = {
-            ...settings,
-            ...message.patch,
-            whitelist: message.patch.whitelist ?? settings.whitelist,
-          };
-          const saved = await handleSettingsChanged(merged);
-          return { ok: true, settings: saved };
+          return enqueueSettingsMutation(async () => {
+            const settings = await loadSettings();
+            const merged: ExtensionSettings = {
+              ...settings,
+              ...message.patch,
+              whitelist: message.patch.whitelist ?? settings.whitelist,
+            };
+            const saved = await handleSettingsChanged(merged);
+            return { ok: true, settings: saved };
+          });
         }
 
         case 'rcg:clear-log': {

@@ -90,13 +90,23 @@ function sanitizeWhitelist(raw: unknown): WhitelistEntry[] {
 
     const mode: WhitelistMode = record.mode === 'ignore' ? 'ignore' : 'accept';
     seen.add(validated.normalized);
-    result.push({
+    const cleanNote =
+      typeof record.note === 'string' && record.note.trim()
+        ? record.note.trim().slice(0, 120)
+        : undefined;
+    const entry: WhitelistEntry = {
       id: typeof record.id === 'string' && record.id ? record.id : generateId(),
       pattern: validated.normalized,
       mode,
-      note: typeof record.note === 'string' && record.note.trim() ? record.note.trim().slice(0, 120) : undefined,
-      createdAt: typeof record.createdAt === 'number' && Number.isFinite(record.createdAt) ? record.createdAt : Date.now(),
-    });
+      createdAt:
+        typeof record.createdAt === 'number' && Number.isFinite(record.createdAt)
+          ? record.createdAt
+          : Date.now(),
+    };
+    if (cleanNote !== undefined) {
+      entry.note = cleanNote;
+    }
+    result.push(entry);
   }
 
   return result;
@@ -124,36 +134,87 @@ export function sanitizeSettings(raw: unknown): ExtensionSettings {
   };
 }
 
+interface StoredSettingsRecord extends ExtensionSettings {
+  _updatedAt?: number;
+}
+
+let lastSettingsWriteTs = 0;
+
+function nextSettingsTimestamp(): number {
+  const now = Date.now();
+  lastSettingsWriteTs = now > lastSettingsWriteTs ? now : lastSettingsWriteTs + 1;
+  return lastSettingsWriteTs;
+}
+
+function extractUpdatedAt(raw: unknown): number {
+  if (!raw || typeof raw !== 'object') {
+    return 0;
+  }
+  const value = (raw as { _updatedAt?: unknown })._updatedAt;
+  return typeof value === 'number' && Number.isFinite(value) ? value : 0;
+}
+
 export async function loadSettings(): Promise<ExtensionSettings> {
-  try {
-    const data = await getSyncStorage().get(SETTINGS_KEY);
-    if (data[SETTINGS_KEY]) {
-      return sanitizeSettings(data[SETTINGS_KEY]);
+  const storage = getExtensionStorage();
+
+  let syncRaw: unknown;
+  let localRaw: unknown;
+
+  if (storage?.sync) {
+    try {
+      const data = await storage.sync.get(SETTINGS_KEY);
+      syncRaw = data[SETTINGS_KEY];
+    } catch {
+      // Ignore sync read error and fall back to local storage
     }
-  } catch {
-    // Fallback to local storage below
   }
 
-  try {
-    const localData = await getLocalStorage().get(SETTINGS_KEY);
-    return sanitizeSettings(localData[SETTINGS_KEY]);
-  } catch {
-    return { ...DEFAULT_SETTINGS, whitelist: [] };
+  if (storage?.local) {
+    try {
+      const localData = await storage.local.get(SETTINGS_KEY);
+      localRaw = localData[SETTINGS_KEY];
+    } catch {
+      // Ignore local read error
+    }
   }
+
+  if (syncRaw && localRaw) {
+    const syncTs = extractUpdatedAt(syncRaw);
+    const localTs = extractUpdatedAt(localRaw);
+    // Prefer local when local is strictly newer (e.g. a previous sync.set failed due to quota/rate limit)
+    return sanitizeSettings(localTs > syncTs ? localRaw : syncRaw);
+  }
+
+  if (syncRaw) {
+    return sanitizeSettings(syncRaw);
+  }
+
+  if (localRaw) {
+    return sanitizeSettings(localRaw);
+  }
+
+  return { ...DEFAULT_SETTINGS, whitelist: [] };
 }
 
 export async function saveSettings(settings: ExtensionSettings): Promise<ExtensionSettings> {
   const clean = sanitizeSettings(settings);
+  const record: StoredSettingsRecord = {
+    ...clean,
+    _updatedAt: nextSettingsTimestamp(),
+  };
+
   try {
-    await getSyncStorage().set({ [SETTINGS_KEY]: clean });
-  } catch {
-    // Quota or sync disabled: persist locally as fallback
-  }
-  try {
-    await getLocalStorage().set({ [SETTINGS_KEY]: clean });
+    await getLocalStorage().set({ [SETTINGS_KEY]: record });
   } catch {
     // Ignore if local storage unavailable in mock environments
   }
+
+  try {
+    await getSyncStorage().set({ [SETTINGS_KEY]: record });
+  } catch {
+    // Quota or sync disabled: local storage already has the newer timestamp
+  }
+
   return clean;
 }
 

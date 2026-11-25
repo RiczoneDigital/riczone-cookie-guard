@@ -6,7 +6,7 @@
     "message": "Cookie Guard"
   },
   "extDescription": {
-    "message": "Lehnt Cookie-Banner automatisch ab und akzeptiert sie auf Whitelist-Seiten (z. B. Payback) automatisch – mit Global Privacy Control."
+    "message": "Lehnt Cookie-Banner automatisch ab, akzeptiert sie auf Whitelist-Seiten (z. B. Payback) und sendet Global Privacy Control."
   },
   "badgeOff": {
     "message": "AUS"
@@ -66,7 +66,7 @@
     "message": "Whitelist: Akzeptieren"
   },
   "detailWhitelistAccept": {
-    "message": "Auf Whitelist ($PATTERN$) – Cookies werden automatisch akzeptiert.",
+    "message": "Auf Whitelist ($PATTERN$). Cookies werden automatisch akzeptiert.",
     "placeholders": {
       "pattern": { "content": "$1" }
     }
@@ -81,7 +81,7 @@
     "message": "Whitelist: Ignorieren"
   },
   "detailWhitelistIgnore": {
-    "message": "Auf Whitelist ($PATTERN$) – Cookie-Banner bleibt unverändert sichtbar.",
+    "message": "Auf Whitelist ($PATTERN$). Cookie-Banner bleibt unverändert sichtbar.",
     "placeholders": {
       "pattern": { "content": "$1" }
     }
@@ -103,7 +103,7 @@
     "message": "Akzeptiert (Fallback)"
   },
   "detailUnavoidable": {
-    "message": "Ablehnen auf dieser Seite nicht möglich – kostenlos akzeptiert ($CMP$).",
+    "message": "Ablehnen auf dieser Seite nicht möglich. Kostenlos akzeptiert ($CMP$).",
     "placeholders": {
       "cmp": { "content": "$1" }
     }
@@ -142,13 +142,13 @@
     "message": "Riczone Cookie Guard deaktiviert."
   },
   "fbWhitelistRemoved": {
-    "message": "$PATTERN$ von der Whitelist entfernt – Seite wird neu geladen.",
+    "message": "$PATTERN$ von der Whitelist entfernt. Seite wird neu geladen.",
     "placeholders": {
       "pattern": { "content": "$1" }
     }
   },
   "fbWhitelistAdded": {
-    "message": "$PATTERN$ zur Whitelist hinzugefügt (Auto-Akzeptieren) – Seite wird neu geladen.",
+    "message": "$PATTERN$ zur Whitelist hinzugefügt (Auto-Akzeptieren). Seite wird neu geladen.",
     "placeholders": {
       "pattern": { "content": "$1" }
     }
@@ -166,7 +166,7 @@
     }
   },
   "optionsTitle": {
-    "message": "Riczone Cookie Guard – Einstellungen"
+    "message": "Riczone Cookie Guard: Einstellungen"
   },
   "optionsSubtitle": {
     "message": "Automatisches Cookie-Ablehnen, Whitelist & Datenschutz-Signale"
@@ -250,7 +250,7 @@
     "message": "Unvermeidbare Banner automatisch akzeptieren (z. B. PUR-Abo-Hinweise)"
   },
   "setUnavoidableDesc": {
-    "message": "Wenn eine Webseite keine Ablehnen-Option anbietet (z. B. bei Werbung-oder-Abo-Abfragen), wird automatisch die kostenlose Weiter-Option mit Cookies gewählt – kostenpflichtige Abos werden niemals angeklickt."
+    "message": "Wählt bei Bannern ohne Ablehnen-Option (z. B. PUR-Abo-Hinweisen) automatisch die kostenlose Weiter-Option mit Cookies. Kostenpflichtige Abos werden nie angeklickt."
   },
   "setGpcTitle": {
     "message": "Global Privacy Control (Sec-GPC: 1)"

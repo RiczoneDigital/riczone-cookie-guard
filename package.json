@@ -1,6 +1,6 @@
 {
   "name": "riczone-cookie-guard",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "author": "Riczone <riczone.digital@gmail.com>",
   "homepage": "https://riczone.de",
@@ -9,7 +9,7 @@
     "url": "https://github.com/RiczoneDigital/riczone-cookie-guard.git"
   },
   "private": true,
-  "description": "Lehnt Cookie-Banner automatisch ab und akzeptiert sie auf Whitelist-Seiten (z. B. Payback) automatisch – für Chrome und Firefox (Manifest V3).",
+  "description": "Lehnt Cookie-Banner automatisch ab und akzeptiert sie auf Whitelist-Seiten (z. B. Payback) automatisch, für Chrome und Firefox (Manifest V3).",
   "type": "module",
   "scripts": {
     "dev": "wxt",

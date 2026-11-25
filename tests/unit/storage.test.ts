@@ -1,12 +1,62 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import {
   createWhitelistExportPayload,
+  loadSettings,
   parseWhitelistImportJson,
   sanitizeSettings,
+  saveSettings,
 } from '../../src/shared/storage';
-import type { WhitelistEntry } from '../../src/shared/types';
+import { DEFAULT_SETTINGS, type WhitelistEntry } from '../../src/shared/types';
 
 describe('storage – Settings Sanitization & Whitelist Export/Import', () => {
+  const originalBrowser = (globalThis as Record<string, unknown>).browser;
+  const originalChrome = (globalThis as Record<string, unknown>).chrome;
+
+  afterEach(() => {
+    if (originalBrowser === undefined) {
+      delete (globalThis as Record<string, unknown>).browser;
+    } else {
+      (globalThis as Record<string, unknown>).browser = originalBrowser;
+    }
+    if (originalChrome === undefined) {
+      delete (globalThis as Record<string, unknown>).chrome;
+    } else {
+      (globalThis as Record<string, unknown>).chrome = originalChrome;
+    }
+  });
+
+  it('defaults acceptUnavoidableBanners to false', () => {
+    expect(DEFAULT_SETTINGS.acceptUnavoidableBanners).toBe(false);
+    expect(sanitizeSettings(undefined).acceptUnavoidableBanners).toBe(false);
+  });
+
+  it('keeps newer local settings when storage.sync.set fails and sync still holds stale data', async () => {
+    const syncStore: Record<string, unknown> = {
+      rcg_settings_v1: { ...DEFAULT_SETTINGS, acceptUnavoidableBanners: false },
+    };
+    const localStore: Record<string, unknown> = {};
+
+    (globalThis as Record<string, unknown>).browser = {
+      storage: {
+        sync: {
+          get: async (key: string) => ({ [key]: syncStore[key] }),
+          set: async () => {
+            throw new Error('Sync quota exceeded');
+          },
+        },
+        local: {
+          get: async (key: string) => ({ [key]: localStore[key] }),
+          set: async (items: Record<string, unknown>) => {
+            Object.assign(localStore, items);
+          },
+        },
+      },
+    };
+
+    await saveSettings({ ...DEFAULT_SETTINGS, acceptUnavoidableBanners: true });
+    const loaded = await loadSettings();
+    expect(loaded.acceptUnavoidableBanners).toBe(true);
+  });
   it('sanitizes malformed settings, deduplicates whitelist, and defaults mode to accept', () => {
     const sanitized = sanitizeSettings({
       enabled: true,

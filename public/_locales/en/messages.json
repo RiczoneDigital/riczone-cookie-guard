@@ -6,7 +6,7 @@
     "message": "Cookie Guard"
   },
   "extDescription": {
-    "message": "Automatically rejects cookie banners and auto-accepts them on whitelisted sites (e.g. Payback) – with Global Privacy Control."
+    "message": "Automatically rejects cookie banners, auto-accepts them on whitelisted sites (e.g. Payback), and sends Global Privacy Control."
   },
   "badgeOff": {
     "message": "OFF"
@@ -66,7 +66,7 @@
     "message": "Whitelist: Accept"
   },
   "detailWhitelistAccept": {
-    "message": "Whitelisted ($PATTERN$) – cookies are accepted automatically.",
+    "message": "Whitelisted ($PATTERN$). Cookies are accepted automatically.",
     "placeholders": {
       "pattern": { "content": "$1" }
     }
@@ -81,7 +81,7 @@
     "message": "Whitelist: Ignore"
   },
   "detailWhitelistIgnore": {
-    "message": "Whitelisted ($PATTERN$) – cookie banner stays visible unchanged.",
+    "message": "Whitelisted ($PATTERN$). Cookie banner stays visible unchanged.",
     "placeholders": {
       "pattern": { "content": "$1" }
     }
@@ -103,7 +103,7 @@
     "message": "Accepted (fallback)"
   },
   "detailUnavoidable": {
-    "message": "Reject not available on this site – accepted for free ($CMP$).",
+    "message": "Reject not available on this site. Accepted for free ($CMP$).",
     "placeholders": {
       "cmp": { "content": "$1" }
     }
@@ -142,13 +142,13 @@
     "message": "Riczone Cookie Guard disabled."
   },
   "fbWhitelistRemoved": {
-    "message": "Removed $PATTERN$ from whitelist – reloading page.",
+    "message": "Removed $PATTERN$ from whitelist. Reloading page.",
     "placeholders": {
       "pattern": { "content": "$1" }
     }
   },
   "fbWhitelistAdded": {
-    "message": "Added $PATTERN$ to whitelist (auto-accept) – reloading page.",
+    "message": "Added $PATTERN$ to whitelist (auto-accept). Reloading page.",
     "placeholders": {
       "pattern": { "content": "$1" }
     }
@@ -166,7 +166,7 @@
     }
   },
   "optionsTitle": {
-    "message": "Riczone Cookie Guard – Settings"
+    "message": "Riczone Cookie Guard: Settings"
   },
   "optionsSubtitle": {
     "message": "Automatic cookie rejection, whitelist & privacy signals"
@@ -250,7 +250,7 @@
     "message": "Auto-accept unavoidable banners (e.g. ad-or-subscribe walls)"
   },
   "setUnavoidableDesc": {
-    "message": "If a site offers no reject option (e.g. accept-with-ads vs. paid subscription), automatically selects the free continue option with cookies – paid subscriptions are never clicked."
+    "message": "For banners without a reject option (e.g. ad-or-subscribe walls), automatically selects the free option with cookies. Paid subscriptions are never clicked."
   },
   "setGpcTitle": {
     "message": "Global Privacy Control (Sec-GPC: 1)"

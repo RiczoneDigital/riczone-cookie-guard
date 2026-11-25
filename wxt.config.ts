@@ -1,4 +1,5 @@
 import { defineConfig } from 'wxt';
+import pkg from './package.json';
 
 export default defineConfig({
   srcDir: '.',
@@ -10,7 +11,7 @@ export default defineConfig({
       name: '__MSG_extName__',
       short_name: '__MSG_extShortName__',
       description: '__MSG_extDescription__',
-      version: '1.0.0',
+      version: pkg.version,
       default_locale: 'en',
       permissions: ['storage', 'scripting', 'declarativeNetRequest'],
       host_permissions: ['<all_urls>'],

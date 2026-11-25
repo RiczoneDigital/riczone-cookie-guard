@@ -2,16 +2,16 @@
 
 [English](./README.md) · **Deutsch**
 
-Datenschutzfreundliche Browser-Erweiterung (**Manifest V3**) für **Google Chrome**, **Mozilla Firefox** und **Firefox für Android**, die Cookie-Banner automatisch ablehnt – mit flexibler Whitelist, zweisprachiger Oberfläche (Deutsch & Englisch) und Global Privacy Control (`Sec-GPC: 1`).
+Datenschutzfreundliche Browser-Erweiterung (**Manifest V3**) für **Google Chrome**, **Mozilla Firefox** und **Firefox für Android**, die Cookie-Banner automatisch ablehnt. Mit flexibler Whitelist, zweisprachiger Oberfläche (Deutsch & Englisch) und Global Privacy Control (`Sec-GPC: 1`).
 
 ## Funktionen
 
 - **Automatisches Ablehnen:** Nutzt über 1.500 CMP-Regeln (`@duckduckgo/autoconsent`) plus eine deutsch-/englischsprachige Fallback-Heuristik (inkl. Shadow DOM), um Cookie-Banner automatisch abzulehnen.
-- **Flexible Whitelist:** Domains wie `payback.de` (inkl. Subdomains, optional auch Exakt-Matches `=host` oder Wildcards `*.domain.de`) per 1-Klick im Popup oder in den Einstellungen freigeben – standardmäßig mit *Automatisch akzeptieren* oder optional *Nicht eingreifen*.
-- **Unvermeidbare Banner (abschaltbar):** Optionale Einstellung, um Pay-or-OK-/PUR-Abo-Paywalls (die keine kostenlose Ablehnen-Option anbieten) automatisch über die kostenlose Weiter-Option zu schließen, ohne jemals kostenpflichtige Abo-Buttons zu klicken.
-- **Global Privacy Control (`Sec-GPC: 1`):** Sendet das standardisierte Datenschutz-Signal als HTTP-Header und `navigator.globalPrivacyControl` – auf Whitelist-Domains automatisch deaktiviert.
+- **Flexible Whitelist:** Domains wie `payback.de` (inkl. Subdomains, optional auch Exakt-Matches `=host` oder Wildcards `*.domain.de`) per 1-Klick im Popup oder in den Einstellungen freigeben. Standardmäßig mit *Automatisch akzeptieren* oder optional *Nicht eingreifen*.
+- **Unvermeidbare Banner (standardmäßig aus):** Optionale Einstellung, um Pay-or-OK-/PUR-Abo-Paywalls (die keine kostenlose Ablehnen-Option anbieten) automatisch über die kostenlose Weiter-Option zu schließen, ohne jemals kostenpflichtige Abo-Buttons zu klicken.
+- **Global Privacy Control (`Sec-GPC: 1`):** Sendet das standardisierte Datenschutz-Signal als HTTP-Header und `navigator.globalPrivacyControl`. Auf Whitelist-Domains automatisch deaktiviert.
 - **Zweisprachige Oberfläche (DE / EN):** Passt sich automatisch der Browsersprache an (`_locales/de` und `_locales/en`).
-- **Datenschutz & Speicherung:** Cookie-Banner werden direkt im Browser verarbeitet – Riczone Cookie Guard verwendet keinen eigenen Server und erhebt keine Telemetrie (`data_collection_permissions: ["none"]`). Statistik und Aktionsprotokoll (letzte 50 Einträge) bleiben lokal (`browser.storage.local`). Einstellungen und Whitelist werden über `browser.storage.sync` (mit lokalem Fallback) abgelegt und können dadurch über die eingebaute Browser-Synchronisierung zwischen Geräten synchronisiert werden.
+- **Datenschutz & Speicherung:** Cookie-Banner werden direkt im Browser verarbeitet. Riczone Cookie Guard verwendet keinen eigenen Server und erhebt keine Telemetrie (`data_collection_permissions: ["none"]`). Statistik und Aktionsprotokoll (letzte 50 Einträge) bleiben lokal (`browser.storage.local`). Einstellungen und Whitelist werden über `browser.storage.sync` (mit lokalem Fallback) abgelegt und können dadurch über die eingebaute Browser-Synchronisierung zwischen Geräten synchronisiert werden.
 
 ## Entwicklung & Build
 
